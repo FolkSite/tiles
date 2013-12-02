@@ -1,0 +1,39 @@
+.button.yellow.get-theme {
+	padding-right: 38px;
+	background-image: url(../images/icon-get-theme.png) !important;
+	background-repeat: no-repeat !important;
+	background-position: 130px center !important;
+	background-color:#e5bd2c;
+	color:#333733;
+	border: 1px solid #be9d25;
+	background: -moz-linear-gradient(top, #efd740, #e5bd2c) !important;
+	background: -webkit-linear-gradient(top, #efd740, #e5bd2c) !important;
+	background: -o-linear-gradient(top, #efd740, #e5bd2c) !important; 
+	background: -ms-linear-gradient(top, #efd740, #e5bd2c) !important; 
+	text-shadow: 0 1px 0 #ffea8a;
+	-webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset; 
+	-moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset; 
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+}
+.button.yellow.get-theme:hover {
+
+	background-color: #fbcb1d;
+	background:  -moz-linear-gradient(top, #f5e547, #e5bd2c) !important;
+	background:  -webkit-linear-gradient(top, #f5e547, #e5bd2c) !important;
+	background:  -o-linear-gradient(top, #f5e547, #e5bd2c) !important; 
+	background:  -ms-linear-gradient(top, #f5e547, #e5bd2c) !important; 
+	-webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset; 
+	-moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset; 
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+}
+.sf-menu ul {
+	border-radius: 4px !important;
+}
+
+.latest-post-sidebar.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}

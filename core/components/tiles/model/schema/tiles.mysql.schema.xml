@@ -1,0 +1,25 @@
+<model package="tiles" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
+    <object class="Tile" table="tiles" extends="xPDOSimpleObject">
+        <field key="title" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
+        <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
+        <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
+        <field key="url" dbtype="varchar" precision="255" phptype="string" null="false" comment="Link somewhere else"/>
+        <field key="image_path" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
+        <field key="image_url" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
+        <field key="image_alt" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
+		<field key="image_title" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="thumbnail_url" dbtype="varchar" precision="255" phptype="string" null="false"/>
+		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" />
+		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
+		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
+		<field key="size" dbtype="int" precision="11" phptype="integer" null="false" />
+        <field key="type" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
+        <field key="group" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
+		<field key="seq" dbtype="int" precision="11" phptype="integer" null="false" />
+
+		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
+
+        <field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
+        <field key="timestamp_edited" dbtype="timestamp" phptype="timestamp" null="true"/>
+    </object>
+</model>
