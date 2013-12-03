@@ -335,6 +335,8 @@ class TilesMgrController{
      */
     public function image_crop($args) { 
         $this->modx->log(1, print_r($args,true));
+        // http://www.php.net/manual/en/function.imagecopy.php
+        
     }
 }
 /*EOF*/
