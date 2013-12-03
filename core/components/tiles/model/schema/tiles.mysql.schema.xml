@@ -4,15 +4,19 @@
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
         <field key="url" dbtype="varchar" precision="255" phptype="string" null="false" comment="Link somewhere else"/>
-        <field key="image_path" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
-        <field key="image_url" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
+        <field key="image_location" dbtype="varchar" precision="255" phptype="string" null="false" comment="Acts as both path and URL: rel to MODX_ASSETS_PATH or MODX_ASSETS_URL"/>
         <field key="image_alt" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
 		<field key="image_title" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="thumbnail_url" dbtype="varchar" precision="255" phptype="string" null="false"/>
-		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="size" dbtype="int" precision="11" phptype="integer" null="false" />
+
+		<field key="color" dbtype="varchar" precision="16" phptype="string" null="false" comment="HTML color code"/>
+        <field key="expireson" dbtype="datetime" phptype="datetime" comment="When this offer expires."/>
+        <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="true" />
+        <field key="prev_price" dbtype="decimal" precision="8,2" phptype="float" null="true" />
+		
         <field key="type" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
         <field key="group" dbtype="varchar" precision="255" phptype="string" null="false" comment=""/>
 		<field key="seq" dbtype="int" precision="11" phptype="integer" null="false" />

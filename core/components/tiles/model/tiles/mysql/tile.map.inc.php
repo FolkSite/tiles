@@ -10,15 +10,17 @@ $xpdo_meta_map['Tile']= array (
     'description' => NULL,
     'content' => '',
     'url' => NULL,
-    'image_path' => NULL,
-    'image_url' => NULL,
+    'image_location' => NULL,
     'image_alt' => NULL,
     'image_title' => NULL,
     'thumbnail_url' => NULL,
-    'path' => NULL,
     'width' => NULL,
     'height' => NULL,
     'size' => NULL,
+    'color' => NULL,
+    'expireson' => NULL,
+    'price' => NULL,
+    'prev_price' => NULL,
     'type' => NULL,
     'group' => NULL,
     'seq' => NULL,
@@ -59,21 +61,13 @@ $xpdo_meta_map['Tile']= array (
       'null' => false,
       'comment' => 'Link somewhere else',
     ),
-    'image_path' => 
+    'image_location' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
-      'comment' => '',
-    ),
-    'image_url' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '255',
-      'phptype' => 'string',
-      'null' => false,
-      'comment' => '',
+      'comment' => 'Acts as both path and URL: rel to MODX_ASSETS_PATH or MODX_ASSETS_URL',
     ),
     'image_alt' => 
     array (
@@ -97,13 +91,6 @@ $xpdo_meta_map['Tile']= array (
       'phptype' => 'string',
       'null' => false,
     ),
-    'path' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '255',
-      'phptype' => 'string',
-      'null' => true,
-    ),
     'width' => 
     array (
       'dbtype' => 'int',
@@ -124,6 +111,34 @@ $xpdo_meta_map['Tile']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'color' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '16',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'HTML color code',
+    ),
+    'expireson' => 
+    array (
+      'dbtype' => 'datetime',
+      'phptype' => 'datetime',
+      'comment' => 'When this offer expires.',
+    ),
+    'price' => 
+    array (
+      'dbtype' => 'decimal',
+      'precision' => '8,2',
+      'phptype' => 'float',
+      'null' => true,
+    ),
+    'prev_price' => 
+    array (
+      'dbtype' => 'decimal',
+      'precision' => '8,2',
+      'phptype' => 'float',
+      'null' => true,
     ),
     'type' => 
     array (
