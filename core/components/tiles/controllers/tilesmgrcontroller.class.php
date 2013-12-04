@@ -77,7 +77,6 @@ class TilesMgrController{
                     }
                 );
                 
-                
                 // Refresh the list on success (append new tile to end)
                 myDropzone.on("success", function(file,response) {
                     response = jQuery.parseJSON(response);
@@ -138,21 +137,17 @@ class TilesMgrController{
             'msg' => '',
         );
         
-/*
-        $token = $this->modx->getOption('HTTP_MODAUTH', $args);   
-        if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save FAILED. Invalid token: '.print_r($args,true));
-            $out['success'] = false;
-            $out['msg'] = 'Invalid token';
-        }
-*/
-        
         $action = $this->modx->getOption('action', $args);
         unset($args['action']);        
         
         switch ($action) {
             case 'update':
                 $Tile = $this->modx->getObject('Tile',$this->modx->getOption('id', $args));
+                if (!$Tile) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Invalid Tile.';
+                    return json_encode($out);
+                }
                 $Tile->fromArray($args);
                 if (!$Tile->save()) {
                     $out['success'] = false;
@@ -162,9 +157,19 @@ class TilesMgrController{
                 break;
             case 'delete':
                 $Tile = $this->modx->getObject('Tile',$this->modx->getOption('id', $args));
+                if (!$Tile) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Invalid Tile.';
+                    return json_encode($out);
+                }
+                // Remove the file
+                if ($Tile->get('image_location') && file_exists(MODX_ASSETS_PATH.$Tile->get('image_location'))) {
+                    @unlink(MODX_ASSETS_PATH.$Tile->get('image_location'));
+                }
                 if (!$Tile->remove()) {
                     $out['success'] = false;
-                    $out['msg'] = 'Failed to delete Tile.';    
+                    $out['msg'] = 'Failed to delete Tile.';
+                    return json_encode($out);
                 }
                 $out['msg'] = 'Tile deleted successfully.';    
                 break;

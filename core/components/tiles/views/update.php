@@ -6,8 +6,11 @@
         });
     });
 
+    /**
+     * Ajax save
+     *
+     */
     function save_tile() {
-        console.log('Updating product.');
         var values = jQuery('#update_tile').serialize();
     	var url = connector_url + 'save';
 
@@ -29,7 +32,39 @@
 	    });
 	    //e.preventDefault();
     }  
+
+    /** 
+     * Ajax delete
+     *
+     */    
+    function delete_tile() {
+        var answer = confirm('Are you sure you want to delete this tile?');
+        if (answer){
+            var values = jQuery('#update_tile').serialize();
+        	var url = connector_url + 'save';
     
+    	    jQuery.post( url+"&action=delete", values, function(data){
+                data = jQuery.parseJSON(data);
+                //console.log(data);                
+    	        jQuery('#msg').show();
+                if (data.success) {
+                   window.location = "<?php print $data['mgr_controller_url'] ?>show_all";
+                }
+                else {
+                   jQuery('#tiles-result').html('Error');                
+                   jQuery('#msg').addClass('error');
+                }
+                
+                jQuery('#tiles-result-msg').html(data.msg);	       
+                jQuery('#msg').delay(3200).fadeOut(300);
+                // TODO: Close modal window or redirect to the list.
+    	    });
+
+        }
+        else{
+            return false;
+        }
+    }
     /**
      * Callback function ref'd by jcrop
      * this sets values in hidden form fields
@@ -165,5 +200,5 @@
     
     <a href="#" onclick="javascript:save_tile(); return false;" class="btn">Save</a>
     <a href="<?php print $data['mgr_controller_url'] ?>show_all" class="btn">Close</a>
-
+    <a href="#" onclick="javascript:delete_tile(); return false;" class="btn">Delete</a>
 </form>
