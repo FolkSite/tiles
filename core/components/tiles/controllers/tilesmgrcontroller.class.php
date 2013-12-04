@@ -47,6 +47,7 @@ class TilesMgrController{
     
     public function show_all() {
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
+        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/dropzone.css');
            
                 
         $this->modx->regClientStartupScript($this->assets_url . 'components/tiles/js/jquery-2.0.3.min.js');

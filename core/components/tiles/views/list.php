@@ -16,23 +16,21 @@ function save_order() {
 </script>
 
 <div id="modx-panel-workspace" class="x-plain container">
-	<div class="tiles-header clearfix">
-		<div class="header-title">
-			<h2>Tiles</h2>
+		<div class="tiles-header clearfix">
+			<div class="header-title">
+				<h2>Tiles</h2>
+			</div>
+			<div class="buttons-wrapper">
+		            <button class="btn" onclick="javascript:save_order(); return false;" id="save_order">Save Order</button>
+		        	<a class="btn" href="#">Close</a>
+			</div>
 		</div>
-		<div class="buttons-wrapper">
-	            <button class="btn" onclick="javascript:save_order(); return false;" id="save_order">Save Order</button>
-	        	<a class="btn" href="#">Close</a>
-		</div>
-	</div>
-
-
+	<div class="well">
 		<ul class="clearfix" id="product_images"><?php print isset($data['tiles']) ? $data['tiles'] : ''; ?></ul>
-
-        <div class="dropzone-wrap" id="image_dropzone">
-        	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
-        </div>
-
+	</div>
+    <div class="dropzone-wrap" id="image_dropzone">
+    	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
+    </div>
 
 </div>
 
