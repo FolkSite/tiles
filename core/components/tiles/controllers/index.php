@@ -8,6 +8,7 @@
  */
  
 $core_path = $modx->getOption('tiles.core_path','',MODX_CORE_PATH);
+
 require_once($core_path.'components/tiles/controllers/tilesmgrcontroller.class.php');
 
 $Tiles = new TilesMgrController($modx);

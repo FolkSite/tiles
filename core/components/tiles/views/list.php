@@ -14,62 +14,26 @@ function save_order() {
 
 }
 </script>
-<form id="all_tiles">  
-<!-- PAGE TITLE -->
-	<div class="container m-bot-25 clearfix">
-		<div class="sixteen columns">
-			<h1 class="page-title">Tiles</h1>
-			
-            <span class="btn" onclick="javascript:save_order(); return false;">Save Order</span>
 
-			     <?php
-			     /*
-			     // TODO: filter by type or group?
-				<ul id="filter"> 
-					<li class="current all"><a href="#">All</a></li> 
-					<li class="category1"><a href="#">Web</a></li> 
-					<li class="category2"><a href="#">Design</a></li> 
-					<li class="category3"><a href="#">Illustration</a></li> 
-					<li class="category4"><a href="#">Photo</a></li> 
-				</ul>
-				*/
-				?>
+<div id="modx-panel-workspace" class="x-plain container">
+	<div class="tiles-header clearfix">
+		<div class="header-title">
+			<h2>Tiles</h2>
 		</div>
-	</div>	
-
-
-	<div class="container filter-portfolio clearfix" id="image_dropzone" style="height:500px; width:500px; border:1px solid blue;">
-
-
-            <?php print $data['tiles']; ?>
-
+		<div class="buttons-wrapper">
+	            <button class="btn" onclick="javascript:save_order(); return false;" id="save_order">Save Order</button>
+	        	<a class="btn" href="#">Close</a>
+		</div>
 	</div>
-	
-</form>	
-<?php
-/*
-	
-<!-- PAGINATION-1 -->
-	<div class="container m-bot-25 clearfix">
-		<div class="sixteen columns pagination-1-container">
-			<ul class="pagination-1">
-				<li>
-					<a class="pag-prev" href="#"></a>
-				</li>
-				<li>
-					<a class="pag-current" href="#">1</a>
-				</li>
-				<li>
-					<a href="#">2</a>
-				</li>
-				<li>
-					<a href="#">3</a>
-				</li>
-				<li>
-					<a class="pag-next" href="#"></a>
-				</li>
-			</ul>
-		</div>
-	</div>	
-*/
-?>
+
+
+		<ul class="clearfix" id="product_images"><?php print isset($data['tiles']) ? $data['tiles'] : ''; ?></ul>
+
+        <div class="dropzone-wrap" id="image_dropzone">
+        	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
+        </div>
+
+
+</div>
+
+

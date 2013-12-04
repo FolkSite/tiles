@@ -46,58 +46,15 @@ class TilesMgrController{
     }
     
     public function show_all() {
-
-        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/style.css');
-        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/skeleton.css');
-//        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/sequencejs-theme.modern-slide-in.css');
-//        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/skin.css');
-//        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/jquery.fancybox-1.3.4.css');                
-//        $this->modx->regClientCSS('http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,700,300');                
+        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
+           
                 
         $this->modx->regClientStartupScript($this->assets_url . 'components/tiles/js/jquery-2.0.3.min.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jquery.easing.1.3.js');
         
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/superfish.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/dropzone.js');
-/*
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jquery.easing.1.3.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jquery.easing.1.3.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jquery.easing.1.3.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jquery.easing.1.3.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jquery.easing.1.3.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jquery.easing.1.3.js');
-*/
-                
-
-    
-/*
-
-<!-- CSS begin -->
-		
-		<!--[if lt IE 9]><link rel="stylesheet" type="text/css" media="screen" href="css/sequencejs-theme.modern-slide-in.ie.css" /><![endif]-->
-		<!--[if lte IE 8]><link rel="stylesheet" type="text/css" href="css/ie-warning.css" ><![endif]-->
-		<!--[if lte IE 9]><link rel="stylesheet" type="text/css" media="screen" href="css/style-ie.css" /><![endif]-->
-        <!--[if lte IE 8]><link rel="stylesheet" type="text/css" href="css/ei8fix.css" ><![endif]-->
- 
-<!-- CSS end -->
-<!-- JS begin -->
-
-
-		<script type="text/javascript" src="js/superfish.js"></script>
-		<script type="text/javascript" src="js/sequence.jquery-min.js"></script>
-		<script type="text/javascript" src="js/sequence-slider.js"></script>
-		<script type="text/javascript" src="js/jquery.jcarousel.js"></script>
-		<script type="text/javascript" src="js/jquery.fancybox-1.3.4.pack.js"></script>
-		<script type="text/javascript" src="js/jQuery.BlackAndWhite.min.js"></script>
-		<script type="text/javascript" src="js/jquery.tweet.js"></script>
-		<script type="text/javascript" src="js/jquery.accordion.2.0.min.js"></script>
-		<script type="text/javascript" src="js/jquery.quicksand.js"></script>
-		<script type="text/javascript" src="js/jflickrfeed.min.js"></script>
-		<script type="text/javascript" src="js/main.js"></script>
-
-
-*/    
+   
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var connector_url = "'.$this->connector_url.'";
             var assets_url = "'.MODX_ASSETS_URL.'";
@@ -111,11 +68,14 @@ class TilesMgrController{
         $data = array();
         $data['mgr_controller_url'] = $this->mgr_controller_url;
         $data['tiles'] = '';
-        foreach ($Tiles as $T) {
-            $tdata = $T->toArray();
-            $tdata['mgr_controller_url'] = $this->mgr_controller_url;
-            $data['tiles'] .= $this->_load_view('tile.php',$tdata);
+        if ($Tiles) {
+            foreach ($Tiles as $T) {
+                $tdata = $T->toArray();
+                $tdata['mgr_controller_url'] = $this->mgr_controller_url;
+                $data['tiles'] .= $this->_load_view('tile.php',$tdata);
+            }
         }
+        
         return $this->_load_view('list.php',$data);
     }
     
