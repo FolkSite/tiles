@@ -1,7 +1,12 @@
 <script>
 $(function() {
-    $( "#portfolio" ).sortable();
-    $( "#portfolio" ).disableSelection();
+    $("#product_images").sortable();
+
+	$('.li_product_image').hover(
+		function() { $(this).find('a.remove-img, a.edit-img').show(); },
+		function() { $(this).find('a.remove-img, a.edit-img').hide(); }
+	);
+    
 });
 
 function save_order() {

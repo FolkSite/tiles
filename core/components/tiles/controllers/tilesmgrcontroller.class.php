@@ -186,6 +186,7 @@ class TilesMgrController{
             $data['visible_width'] = $this->max_image_width;
         }
         
+        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
         $this->modx->regClientStartupScript($this->assets_url . 'components/tiles/js/jquery-2.0.3.min.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/dropzone.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jcrop.js');        
