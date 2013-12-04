@@ -45,6 +45,12 @@ class TilesMgrController{
     
     }
     
+    /**
+     * Shows all tiles in a grid or list.
+     *
+     *
+     *
+     */
     public function show_all($args) {
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/dropzone.css');
@@ -56,11 +62,38 @@ class TilesMgrController{
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/dropzone.js');
    
+        // Get a javascript compatible version of the tile template so it can better format upload progress
+        // We send it default parameters from a default new Tile object
+        $Tile = $this->modx->newObject('Tile');
+        $previewTemplate = $this->_load_view('preview.php',$Tile->toArray());
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var connector_url = "'.$this->connector_url.'";
             var assets_url = "'.MODX_ASSETS_URL.'";
             jQuery(document).ready(function() {
-                var myDropzone = new Dropzone("div#image_dropzone", {url: connector_url+"image_upload"});
+                var myDropzone = new Dropzone("div#image_dropzone", 
+                    {
+                        url: connector_url+"image_upload",
+                        previewTemplate: '.json_encode($previewTemplate).'
+                    }
+                );
+                
+                
+                // Refresh the list on success (append new tile to end)
+                myDropzone.on("success", function(file,response) {
+                    response = jQuery.parseJSON(response);
+                    console.log(response);
+                    if (response.success) {
+                        var url = connector_url + "get_tile&id=" + response.id;
+                        jQuery.post( url, function(data){
+                            jQuery("#product_images").append(data);
+                            jQuery(".dz-preview").remove();
+                        });
+	               }
+	               // TODO: better formatting
+	               else {
+	                   alert(response.msg);
+	               }
+                });
             });
     		</script>
     	');
@@ -207,7 +240,19 @@ class TilesMgrController{
     		var connector_url = "'.$this->connector_url.'";
             var assets_url = "'.MODX_ASSETS_URL.'";
             jQuery(document).ready(function() {
-                var myDropzone = new Dropzone("div#image_dropzone", {url: connector_url+"image_upload&id='.$id.'"});
+                var myDropzone = new Dropzone("div#image_dropzone", 
+                    {
+                        url: connector_url+"image_upload&id='.$id.'"
+                    }
+                );
+                myDropzone.on("success", function(file) {
+                    // Refresh the image on success
+                    var url = connector_url + "get_image_tag&id='.$id.'";
+            	    jQuery.post( url, function(data){
+                        jQuery("#target_image").html(data);
+                        jQuery(".dz-preview").remove();
+	               });
+                });
             });
     		</script>
     	');
@@ -218,6 +263,8 @@ class TilesMgrController{
     /**
      * Post data here to upload an image. This happens when an image is dragged into the 
      * canvas (thus creating a new tile), or when an existing image is replaced.
+     * 
+     * @return JSON message with success, msg, and id 
      */
     public function image_upload($args) {
         
@@ -228,23 +275,23 @@ class TilesMgrController{
         $out = array(
             'success' => true,
             'msg' => '',
+            'id' => ''
         );
-
 
         $tile_id = (int) $this->modx->getOption('id',$args);
         
         $Tile = $this->modx->newObject('Tile');
         if ($tile_id) {
             $Tile = $this->modx->getObject('Tile',$tile_id);
+            $out['id'] = $tile_id;
         }
         if (!$Tile) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'Error fetching tile '.$tile_id);
+            $out['msg'] = 'Error fetching tile '.$tile_id;
+            return json_encode($out);
         }
         
-        $out = array(
-            'success' => true,
-            'msg' => '',
-        );
+
         if (isset($_FILES['file']['name']) ) {
             // Relative to either MODX_ASSETS_URL or MODX_ASSETS_PATH
             $rel_file =  $this->upload_dir.basename($_FILES['file']['name']);
@@ -274,8 +321,8 @@ class TilesMgrController{
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
                 return json_encode($out);
             }
-            $out['rel_file'] = $rel_file;
-            $out['file_size'] = $_FILES['file']['size'];
+            //$out['rel_file'] = $rel_file;
+            //$out['file_size'] = $_FILES['file']['size'];
             
         }
         
@@ -292,6 +339,7 @@ class TilesMgrController{
         }
         else {
             $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved tile '.$Tile->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
+            $out['id'] = $Tile->get('id');
             $out['msg'] = 'Successfully saved image';
         }
         
@@ -308,5 +356,52 @@ class TilesMgrController{
         // http://www.php.net/manual/en/function.imagecopy.php
         
     }
+    
+    /**
+     * Get a single image tag for Ajax update
+     *
+     */
+    public function get_image_tag($args) {
+        $id = (int) $this->modx->getOption('id', $args);
+        
+        $Tile = $this->modx->getObject('Tile',$id);
+        
+        if (!$Tile) {
+            return 'Error loading image.';
+        }
+        
+        $data = $Tile->toArray();
+        $data['mgr_controller_url'] = $this->mgr_controller_url;
+        $data['wide_load'] = '';
+        $data['visible_height'] = $data['height'];
+        $data['visible_width'] = $data['width'];        
+        if ($data['width'] > $this->max_image_width) {
+            $data['wide_load'] = 'Warning! This image is larger than it appears.';
+            $ratio = $this->max_image_width / $data['width'];
+            $data['visible_height'] = $data['height'] * $ratio;
+            $data['visible_width'] = $this->max_image_width;
+        }
+                
+        return $this->_load_view('image.php',$data);
+    }
+
+    /**
+     * Get a single tile for Ajax update
+     *
+     */
+    public function get_tile($args) {
+        $id = (int) $this->modx->getOption('id', $args);
+        
+        $Tile = $this->modx->getObject('Tile',$id);
+        
+        if (!$Tile) {
+            return 'Error loading tile. '.print_r($args,true);
+        }
+        
+        $data = $Tile->toArray();
+        $data['mgr_controller_url'] = $this->mgr_controller_url;
+        return $this->_load_view('tile.php',$data);
+    }
+        
 }
 /*EOF*/

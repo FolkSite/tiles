@@ -1,26 +1,26 @@
 <script>
-$(function() {
-    $("#product_images").sortable();
+jQuery(function() {
+    jQuery("#product_images").sortable();
 
-	$('.li_product_image').hover(
+	jQuery('.li_product_image').hover(
 		function() { $(this).find('a.remove-img, a.edit-img').show(); },
 		function() { $(this).find('a.remove-img, a.edit-img').hide(); }
 	);
 
-	$('#tiles_save_order').on('click',function(e){		
+	jQuery('#tiles_save_order').on('click',function(e){		
         console.log('Updating product.');
         var values = $('#tiles-form').serialize();
     	var url = connector_url + 'save_order';
-	    $.post( url, values, function(data){
-	    	$('.tiles-msg').show();
-	    	data = $.parseJSON(data);
+	    jQuery.post( url, values, function(data){
+	    	jQuery('.tiles-msg').show();
+	    	data = jQuery.parseJSON(data);
 	    	if(data.success == true) {
-	    		$('#tiles-result').html('Success');
+	    		jQuery('#tiles-result').html('Success');
 	    	} else{
 	    		$('#tiles-result').html('Failed');
 	    	}
-	    	$('#tiles-result-msg').html(data.msg);
-	    	$(".tiles-msg").delay(3200).fadeOut(300);
+	    	jQuery('#tiles-result-msg').html(data.msg);
+	    	jQuery(".tiles-msg").delay(3200).fadeOut(300);
 	    } );
 	    e.preventDefault();
     });
@@ -33,8 +33,8 @@ $(function() {
 <div id="modx-panel-workspace" class="x-plain container">
 
 	<div class="tiles-msg">
-		<div id="tiles-result">test</div>
-		<div id="tiles-result-msg">test</div>
+		<div id="tiles-result"></div>
+		<div id="tiles-result-msg"></div>
 	</div>
 
 	<form action="#" method="POST" id="tiles-form">
