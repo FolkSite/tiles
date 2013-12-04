@@ -52,6 +52,7 @@ class TilesMgrController{
      *
      */
     public function show_all($args) {
+        return '<textarea rows="60" cols="60" width="800">'.print_r($this->modx->packages,true).'</textarea>';
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/dropzone.css');
            
@@ -309,12 +310,12 @@ class TilesMgrController{
                     return json_encode($out);
                 }
             }
-            // Image already exists? 
+            // Image already exists? No problem, we just reference it.
             // TODO: rename and get on with it
             if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
-                $out['success'] = false;
-                $out['msg'] = 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file;
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
+                $out['success'] = true;
+                $out['msg'] = 'File already exists: '.MODX_ASSETS_PATH.$rel_file;
+                $this->modx->log(MODX_LOG_LEVEL_DEBUG, $out['msg']);
                 return json_encode($out);
             }
             if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
@@ -322,8 +323,8 @@ class TilesMgrController{
             } 
             else {
                 $out['success'] = false;
-                $out['msg'] = 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file;
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
+                $out['msg'] = 'Upload failed. Check your permissions. '.MODX_ASSETS_PATH.$rel_file;
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, $out['msg']);
                 return json_encode($out);
             }
             //$out['rel_file'] = $rel_file;
