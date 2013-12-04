@@ -45,7 +45,7 @@ class TilesMgrController{
     
     }
     
-    public function show_all() {
+    public function show_all($args) {
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/dropzone.css');
            
@@ -65,7 +65,14 @@ class TilesMgrController{
     		</script>
     	');
 
-        $Tiles = $this->modx->getCollection('Tile');
+        $sort = $this->modx->getOption('sort',$args,'seq');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        
+        $criteria = $this->modx->newQuery('Tile');
+
+        $criteria->sortby($sort,$dir);
+        $Tiles = $this->modx->getCollection('Tile',$criteria);
+
         $data = array();
         $data['mgr_controller_url'] = $this->mgr_controller_url;
         $data['tiles'] = '';
@@ -144,20 +151,26 @@ class TilesMgrController{
     
     public function save_order($args) {
         $this->modx->log(1, print_r($args,true));
-        
+        $tiles = $this->modx->getOption('tiles',$args,array());
+        $out = array(
+            'success' => true,
+            'msg' => 'Tiles Sorted Successfully.',
+        );
         // all tile ids in the new order
-        $seqs = $this->modx->getOption('seq',$args,array());
+       
         $i = 0;
-        foreach ($seqs as $tile_id) {
+        foreach ($tiles as $tile_id) {
             $Tile = $this->modx->getObject('Tile',$tile_id);
             if (!$Tile) {
-                $this->modx->log(1, 'Unable to load Tile '.$tile_id);   
-                continue;
+                $out['success'] = false;
+                $out['msg'] = 'Invalid Title ID'; 
             }
             $Tile->set('seq',$i);
             $Tile->save();
             $i++;
         }
+        
+       return json_encode($out); 
     }
     /**
      * Used to update a single tile

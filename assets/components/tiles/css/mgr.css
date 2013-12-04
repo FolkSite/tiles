@@ -3973,7 +3973,7 @@ a.thumbnail:hover {
 .well {
   min-height: 20px;
   padding: 19px;
-  margin-bottom: 20px;
+  margin: 20px 0;
   background-color: #fff;
   border: 1px solid #e3e3e3;
   -webkit-border-radius: 4px;
@@ -4140,6 +4140,26 @@ button.close {
   background: url('../images/remove-icon.png') no-repeat;
   text-indent: -999999px;
   display: none;
+}
+
+
+.tiles-msg {
+  display : none;
+  background: #fff;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  padding: 10px;
+  width: 250px;
+  position: absolute;
+  top: 10px;
+  right: 250px;
+}
+
+
+#tiles-result {
+  font-weight: bold;
+  font-weight: 14px;
 }
 
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
