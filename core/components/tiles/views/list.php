@@ -38,7 +38,7 @@ function save_order() {
 	</div>	
 
 
-	<div class="container filter-portfolio clearfix" id="image_dropzone">
+	<div class="container filter-portfolio clearfix" id="image_dropzone" style="height:500px; width:500px; border:1px solid blue;">
 
 
             <?php print $data['tiles']; ?>

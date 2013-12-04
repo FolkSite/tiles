@@ -46,11 +46,6 @@ class TilesMgrController{
     }
     
     public function show_all() {
-        if (class_exists('Imagick')) {
-            return 'TRUE';
-        }
-        return 'NOPE';
-        $picture = new Imagick('animated_gif.gif');
 
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/style.css');
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/skeleton.css');
