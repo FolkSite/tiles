@@ -2,11 +2,6 @@
 jQuery(function() {
     jQuery("#product_images").sortable();
 
-	jQuery('.li_product_image').hover(
-		function() { $(this).find('a.remove-img, a.edit-img').show(); },
-		function() { $(this).find('a.remove-img, a.edit-img').hide(); }
-	);
-
 	jQuery('#tiles_save_order').on('click',function(e){		
         console.log('Updating product.');
         var values = $('#tiles-form').serialize();

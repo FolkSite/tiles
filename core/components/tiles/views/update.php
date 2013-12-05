@@ -4,6 +4,7 @@
     		onChange: set_coords,
     		onSelect: set_coords
         });
+        $('.datepicker').datepicker();
     });
 
     /**
@@ -146,21 +147,28 @@
                                 <label for="image_alt">Image Alt</label>
                                 <input type="text" class="span8" id="image_alt" name="image_alt" value="<?php print htmlspecialchars($data['image_alt']); ?>"/>
                                 <label for="content">Content</label>
-                                <textarea id="content" class="span8"  cols="60" rows="9" name="content"><?php print htmlspecialchars($data['content']); ?></textarea>
+                                <textarea id="content" class="span8"  cols="60" rows="7" name="content"><?php print htmlspecialchars($data['content']); ?></textarea>
                             </td>
                             <td>
                                 <label for="url">URL</label>
                                 <input type="text" class="span4" id="url" name="url" value="<?php print htmlspecialchars($data['url']); ?>"/>
                                 <label for="color">Color</label>
                                 <input type="text" class="span4" id="color" name="color" value="<?php print htmlspecialchars($data['color']); ?>"/>
-                                <label for="expireson">Expires On</label>
-                                <input class="span4" type="text" id="expireson" name="expireson" value="<?php print htmlspecialchars($data['expireson']); ?>"/>
+                                
+                                <div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
+                                      <label for="expireson">Expires On</label>
+                                      <input class="span2" type="text" id="expireson" name="expireson" value="<?php print htmlspecialchars($data['expireson']); ?>"/>
+
+                                      <span class="add-on"><i class="icon icon-calendar"></i></span>
+                                </div>
+
+                                
+                                
+
                                 <label for="price">Price</label>
                                 <input class="span4" type="text" id="price" name="price" value="<?php print htmlspecialchars($data['price']); ?>"/>
                                 <label for="prev_price">Prev. Price</label>
                                 <input class="span4" type="text" id="prev_price" name="prev_price" value="<?php print htmlspecialchars($data['prev_price']); ?>"/>
-                                <label for="type">Type</label>
-                                <input class="span4" type="text" id="type" name="type" value="<?php print htmlspecialchars($data['type']); ?>"/>
                                 <label for="type">Type</label>
                                 <input class="span4" type="text" id="type" name="type" value="<?php print htmlspecialchars($data['type']); ?>"/>
                                 <label for="group">Group</label>
