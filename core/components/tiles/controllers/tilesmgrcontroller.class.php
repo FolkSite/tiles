@@ -17,6 +17,10 @@ class TilesMgrController{
         $this->connector_url = $this->assets_url.'components/tiles/connector.php?f=';
         $this->upload_dir = 'images/tiles/'; // path & url: rel to MODX_ASSETS_PATH & MODX_ASSETS_URL
         $a = (int) $this->modx->getOption('a',$_GET);
+        if (!$a) {
+            $Action = $this->modx->getObject('modAction', array('namespace'=>'tiles','controller'=>'controllers/index'));
+            $a = $Action->get('id');
+        }
         $this->mgr_controller_url = MODX_MANAGER_URL .'?a='.$a.'&f=';
     }
 
