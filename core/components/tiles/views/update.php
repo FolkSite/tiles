@@ -142,7 +142,8 @@
                                 <input type="text" class="span8" id="title" name="title" value="<?php print htmlspecialchars($data['title']); ?>"/>
                                  <label for="description">Description</label>
                                 <input type="text" class="span8" id="description" name="description" value="<?php print htmlspecialchars($data['description']); ?>"/>
-                                
+                                <label for="url">URL</label>
+                                <input type="text" class="span8" id="url" name="url" value="<?php print htmlspecialchars($data['url']); ?>"/>
                                  <label for="type">Type</label>
                                 <input class="span8" type="text" id="type" name="type" value="<?php print htmlspecialchars($data['type']); ?>"/>
                                 <label for="price">Price</label>
@@ -156,8 +157,6 @@
                                 <textarea id="content" class="span8"  cols="60" rows="7" name="content"><?php print htmlspecialchars($data['content']); ?></textarea>
                             </td>
                             <td>
-                                 <label for="url">URL</label>
-                                <input type="text" class="span4" id="url" name="url" value="<?php print htmlspecialchars($data['url']); ?>"/>
                                 <label for="color">Color</label>
                                 <input type="text" class="span4" id="colorpickerField1" name="color" value="<?php print htmlspecialchars($data['color']); ?>"/>
                                 
@@ -173,6 +172,9 @@
                                 <label for="image_alt">Image Alt</label>
                                 <input type="text" class="span4" id="image_alt" name="image_alt" value="<?php print htmlspecialchars($data['image_alt']); ?>"/>
                                  <div id="image_stuff">
+                                <div id="image_dropzone">
+                                    <div class="dz-default dz-message"><span>Drop files here to Update Image</span></div>
+                                </div>   <br>
                                 <?php 
                                 /*
                                 We put in a div here as the dropzone in case the image is too small.
@@ -180,9 +182,7 @@
                                 */
                                 ?>
                                 <?php print $data['wide_load']; ?>
-                                <label>Drag a new image here or double-click to upload a new image.</label>
-                                <div id="image_dropzone">
-                                    <?php
+                                 <?php
                                     if ($data['image_location']):
                                     ?>
                                         
@@ -204,7 +204,7 @@
                                     <?php
                                     endif;
                                     ?>
-                                </div>       
+                                    
 
                             </div>
 
