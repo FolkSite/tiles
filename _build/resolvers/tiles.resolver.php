@@ -17,7 +17,7 @@ if ($object->xpdo) {
             //$modx->addExtensionPackage(PKG_NAME_LOWER,"[[++core_path]]components/".PKG_NAME_LOWER."/model/");
             $modx->log(MODX_LOG_LEVEL_INFO, 'Installing Tiles.');
             $core_path = $modx->getOption('core_path');
-            $modx->addPackage('tiles',$core_path.'components/'.PKG_NAME_LOWER.'/model/');
+            $modx->addPackage('tiles',$core_path.'components/tiles/model/');
             $manager = $modx->getManager();
             $manager->createObjectContainer('Tile');            
             break;
@@ -25,7 +25,7 @@ if ($object->xpdo) {
         case xPDOTransport::ACTION_UNINSTALL:
             $manager = $modx->getManager();
             $manager->removeObjectContainer('Tile');
-            $modx->removeExtensionPackage(PKG_NAME_LOWER);
+//            $modx->removeExtensionPackage(PKG_NAME_LOWER);
             break;
     }
 }
