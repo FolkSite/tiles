@@ -1,9 +1,4 @@
 <?php
-/** 
- Add to extension_packages
- [{"moxycart":{"path":"[[++core_path]]components/moxycart/model/"}},{"articles":{"path":"[[++core_path]]components/articles/model/"}}]
- */
-
 /* @var $object xPDOObject */
 /* @var $modx modX */
 
@@ -19,38 +14,17 @@ if ($object->xpdo) {
             // $modx->getManager()->addField('fieldname')     
             break;
         case xPDOTransport::ACTION_INSTALL:
-            $modx->addExtensionPackage(PKG_NAME_LOWER,"[[++core_path]]components/".PKG_NAME_LOWER."/model/");
-            //print_r($modx->packages);
+            //$modx->addExtensionPackage(PKG_NAME_LOWER,"[[++core_path]]components/".PKG_NAME_LOWER."/model/");
+            $core_path = $modx->getOption('core_path');
+            $modx->addPackage('tiles',$core_path.'components/'.PKG_NAME_LOWER.'/model/');
             $manager = $modx->getManager();
-            $manager->createObjectContainer('Currency');
-            $manager->createObjectContainer('Product');
-            $manager->createObjectContainer('Unit');
-            $manager->createObjectContainer('VariationType'); 
-            $manager->createObjectContainer('VariationTerm');
-            $manager->createObjectContainer('ProductVariationTypes');
-            $manager->createObjectContainer('ProductVariantTerm');
-            $manager->createObjectContainer('Taxonomy');
-            $manager->createObjectContainer('Term');
-            $manager->createObjectContainer('ProductTerms');
-            $manager->createObjectContainer('Category');
-            $manager->createObjectContainer('Cart');
-            $manager->createObjectContainer('Image');       
-            
+            $manager->createObjectContainer('Tile');            
             break;
 
         case xPDOTransport::ACTION_UNINSTALL:
-            $manager->removeObjectContainer('Currency');
-            $manager->removeObjectContainer('Product');
-            $manager->removeObjectContainer('Spec');
-            $manager->removeObjectContainer('VariationType'); 
-            $manager->removeObjectContainer('VariationTerm');
-            $manager->removeObjectContainer('ProductVariationTypes');
-            $manager->removeObjectContainer('ProductTaxonomy');
-            $manager->removeObjectContainer('ProductTerms');
-            $manager->removeObjectContainer('ProductSpecs');
-            $manager->removeObjectContainer('Cart');
-            $manager->removeObjectContainer('Image');        
-            $modx->removeExtensionPackage($package_name);
+            $manager = $modx->getManager();
+            $manager->removeObjectContainer('Tile');
+            $modx->removeExtensionPackage(PKG_NAME_LOWER);
             break;
     }
 }

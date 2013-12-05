@@ -7,6 +7,50 @@
  * @author everett@craftsmancoding.com
  */
 
+/**
+ * Used to get parameters out of a (PHP) docblock.
+ *
+ * @param string $string the unparsed contents of a file
+ * @param string $dox_start string designating the start of a comment (dox) block
+ * @param string $dox_start string designating the start of a comment (dox) block 
+ * @return array on success | false on no doc block found
+ */
+function get_attributes_from_dox($string,$dox_start='/*',$dox_end='*/') {
+    
+    $dox_start = preg_quote($dox_start,'#');
+    $dox_end = preg_quote($dox_end,'#');
+
+
+    // Any tags to skip in the doc block, e.g. @param, that may have significance for PHPDoc and 
+    // for general documentation, but which are not intended for RepoMan and do not describe
+    // object attributes. Omit "@" from the attribute names.
+    // See http://en.wikipedia.org/wiki/PHPDoc
+    $skip_tags = array('param','return','abstract','access','author','copyright','deprecated',
+        'deprec','example','exception','global','ignore','internal','link','magic',
+        'package','see','since','staticvar','subpackage','throws','todo','var','version'
+    );
+
+    preg_match("#$dox_start(.*)$dox_end#msU", $string, $matches);
+
+    if (!isset($matches[1])) {
+            return false; // No doc block found!
+    }
+    
+    // Get the docblock                
+    $dox = $matches[1];
+    
+    // Loop over each line in the comment block
+    $a = array(); // attributes
+    foreach(preg_split('/((\r?\n)|(\r\n?))/', $dox) as $line){
+        preg_match('/^\s*\**\s*@(\w+)(.*)$/',$line,$m);
+        if (isset($m[1]) && isset($m[2]) && !in_array($m[1], $skip_tags)) {
+                $a[$m[1]] = trim($m[2]);
+        }
+    }
+    
+    return $a;
+}
+
 // Start the stopwatch...
 $mtime = microtime();
 $mtime = explode(' ', $mtime);
@@ -20,9 +64,9 @@ if (!file_exists(dirname(__FILE__).'/build.config.php')) {
     print "Please create a valid build.config.php file inside of ".dirname(__FILE__)."\n";
     die();
 }
-print "Loading config...\n";
+print "Loading config...<br/>";
 include_once(dirname(__FILE__).'/build.config.php');
-print "Building package ".PKG_NAME."\n";
+print "Building package ".PKG_NAME."<br/>";
 
 // As long as this script is built placed inside a MODX docroot, this will sniff out
 // a valid MODX_CORE_PATH.  This will effectively force the MODX_CONFIG_KEY too.
@@ -49,7 +93,7 @@ if (!defined('MODX_CORE_PATH') && !defined('MODX_CONFIG_KEY')) {
 	}
 }
 
-print "Loading {$dir}/config.core.php\n";
+print "Loading {$dir}/config.core.php<br/>";
 
 if (!defined('MODX_CORE_PATH') || !defined('MODX_CONFIG_KEY')) {
     print "Somehow the loaded config.core.php did not define both MODX_CORE_PATH and MODX_CONFIG_KEY constants.\n";
@@ -67,7 +111,8 @@ require_once MODX_CORE_PATH.'model/modx/modx.class.php';
 $modx = new modx();
 $modx->initialize('mgr');
 $modx->setLogLevel(modX::LOG_LEVEL_INFO);
-$modx->setLogTarget('ECHO'); echo '<pre>'; 
+$modx->setLogTarget('ECHO'); 
+print '<pre>'; 
 flush();
 
 $modx->loadClass('transport.modPackageBuilder', '', false, true);
@@ -116,7 +161,6 @@ $vehicle = $builder->createVehicle($Category, $cat_attributes);
 $builder->putVehicle($vehicle);
 
 
-
 //------------------------------------------------------------------------------
 //! Snippets
 //------------------------------------------------------------------------------
@@ -125,25 +169,25 @@ $objects = array();
 if (file_exists($dir) && is_dir($dir)) {
     print 'Packaging snippets from '.$dir."\n";
     $files = glob($dir.'*.php');
-    print_r($files);
-    exit;
     foreach($files as $f) {
-        $Snippet = $modx->newObject('modSnippet');
-        $Snippet->fromArray(array(
-            'name' => 'Glocation',
-            'description' => '<strong>Version '.PKG_VERSION.'-'.PKG_RELEASE.'</strong> lookup latitude and longitude from a given address and set a series of placeholders. The results for any address are returned from cache whenever possible',
-            'snippet' => file_get_contents('../core/components/'.PKG_NAME_LOWER.'/elements/snippets/snippet.Glocation.php'),
-        ));
-        
-        $objects[] = $Snippet;   
+        $Obj = $modx->newObject('modSnippet');
+        $content = file_get_contents($f);
+        $attributes = get_attributes_from_dox($content);
+        $Obj->fromArray($attributes);
+        $Obj->setContent($content);
+        $name = $Obj->get('name');
+        if (empty($name)) {
+            $name = basename($f,'.php');
+            $name = basename($name,'.snippet');
+            $Obj->set('name',$name);
+        }
+        $objects[] = $Obj;   
     }
-    
     $Category->addMany($objects);    
 }
 else {
     print "No Snippets found in {$dir}\n";
 }
-exit;
 
 
 //------------------------------------------------------------------------------
@@ -154,17 +198,19 @@ $objects = array();
 if (file_exists($dir) && is_dir($dir)) {
     print 'Packaging chunks from '.$dir."\n";
     $files = glob($dir.'*.*');
-    print_r($files);
-    exit;
     foreach($files as $f) {
-        $Chunk = $modx->newObject('modChunk');
-        $Chunk->fromArray(array(
-            'name' => 'Glocation',
-            'description' => '<strong>Version '.PKG_VERSION.'-'.PKG_RELEASE.'</strong> lookup latitude and longitude from a given address and set a series of placeholders. The results for any address are returned from cache whenever possible',
-            'snippet' => file_get_contents('../core/components/'.PKG_NAME_LOWER.'/elements/snippets/snippet.Glocation.php'),
-        ));
-        
-        $objects[] = $Chunk;   
+        $Obj = $modx->newObject('modChunk');
+        $content = file_get_contents($f);
+        $attributes = get_attributes_from_dox($content,'<!--','-->');
+        $Obj->fromArray($attributes);
+        $Obj->setContent($content);
+        $name = $Obj->get('name');
+        if (empty($name)) {
+            $name = basename($f,'.php');
+            $name = basename($name,'.chunk');
+            $Obj->set('name',$name);
+        }
+        $objects[] = $Obj;   
     }
     
     $Category->addMany($objects);    
@@ -172,10 +218,47 @@ if (file_exists($dir) && is_dir($dir)) {
 else {
     print "No Chunks found in {$dir}\n";
 }
-exit;
+
 //------------------------------------------------------------------------------
 //! Plugins
 //------------------------------------------------------------------------------
+$dir = dirname(dirname(__FILE__)).'/core/components/'.PKG_NAME_LOWER.'/elements/plugins/';
+$objects = array();
+if (file_exists($dir) && is_dir($dir)) {
+    print 'Packaging plugins from '.$dir."\n";
+    $files = glob($dir.'*.php');
+    foreach($files as $f) {
+        $events = array();
+        $Obj = $modx->newObject('modPlugin');
+        $content = file_get_contents($f);
+        $attributes = get_attributes_from_dox($content);
+        // if Events...
+        if (isset($attributes['events'])) {
+            $event_names = explode(',',$attributes['events']);
+            foreach ($event_names as $e) {
+                $Event = $modx->newObject('modPluginEvent');
+                $Event->set('event',trim($e));
+                $events[] = $Event;
+            }
+        }
+        $Obj->fromArray($attributes);
+        $Obj->setContent($content);
+        $name = $Obj->get('name');
+        if (empty($name)) {
+            $name = basename($f,'.php');
+            $name = basename($name,'.plugin');
+            $Obj->set('name',$name);
+        }
+        $Obj->addMany($events);
+        $objects[] = $Obj;   
+    }
+    $Category->addMany($objects);    
+}
+else {
+    print "No Plugins found in {$dir}\n";
+}
+
+/*
 $Events = array();
 
 $Plugin = $modx->newObject('modPlugin');
@@ -196,6 +279,7 @@ $Events['OnDocFormSave']->fromArray(array(
 $Plugin->addMany($Events);
 
 $Category->addMany($Plugin);
+*/
 
 
 //------------------------------------------------------------------------------
@@ -206,71 +290,131 @@ $attributes = array(
 	xPDOTransport::PRESERVE_KEYS => true,
 	xPDOTransport::UPDATE_OBJECT => false,	
 );
-$file = dirname(__FILE__).'/data/settings.php';
-if (file_exists($file)) {
-    $settings = include($file);
-    foreach($settings as $s) {
-        $Setting = $modx->newObject('modSystemSetting');
-        $Setting->fromArray($s,'',true,true);
-        $vehicle = $builder->createVehicle($Setting, $attributes);
-        $builder->putVehicle($vehicle);
-    
+$filenames = array(
+    dirname(__FILE__).'/data/transport.settings.php',
+    dirname(__FILE__).'/data/settings.php'
+);
+foreach ($filenames as $file) {
+    if (file_exists($file)) {
+        $settings = include($file);
+        if (is_array($settings)) {
+            foreach($settings as $s) {
+                $Setting = $modx->newObject('modSystemSetting');
+                $Setting->fromArray($s,'',true,true);
+                $vehicle = $builder->createVehicle($Setting, $attributes);
+                $builder->putVehicle($vehicle);            
+            }
+        }
     }
 }
-else {
-    print "No System Settings found.\n";
-}
+
 
 //------------------------------------------------------------------------------
 //! Actions and Menus (CMP)
 //------------------------------------------------------------------------------
+$menu_attributes = array(
+   xPDOTransport::PRESERVE_KEYS => true,
+   xPDOTransport::UPDATE_OBJECT => true,
+   xPDOTransport::UNIQUE_KEY => 'text',
+   xPDOTransport::RELATED_OBJECTS => true,
+   xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
+       'Action' => array(
+           xPDOTransport::PRESERVE_KEYS => false,
+           xPDOTransport::UPDATE_OBJECT => true,
+           xPDOTransport::UNIQUE_KEY => array(
+               'namespace',
+               'controller'
+           ),
+       ),
+   ),
+);
+if (file_exists(dirname(__FILE__).'/data/transport.menus.php')) {
+    $menus = include(dirname(__FILE__).'/data/transport.menus.php');
+    foreach ($menus as $menu) {
+        $vehicle = $builder->createVehicle($menu, $menu_attributes);
+        $builder->putVehicle($vehicle);
+    }
+}
 
 //------------------------------------------------------------------------------
 //! Schema?
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//! Resolvers
+//------------------------------------------------------------------------------
+$dir = dirname(__FILE__).'/resolvers/';
+$objects = array();
+if (file_exists($dir) && is_dir($dir)) {
+    print 'Packaging Resolvers from '.$dir."\n";
+    $files = glob($dir.'*.php');
+    foreach($files as $f) {
+        print 'Resolver '.$f."\n";
+        $vehicle->resolve('php', array('source' => $file));
+        $builder->putVehicle($vehicle);
+    }
+}
+else {
+    print "No Resolvers found in {$dir}\n";
+}
 
 
 //------------------------------------------------------------------------------
 //! Files
 //------------------------------------------------------------------------------
-
 // Assets
 $dir = dirname(dirname(__FILE__)).'/assets/components/'.PKG_NAME_LOWER;
 if (file_exists($dir) && is_dir($dir)) {
+    print "Adding Asset files from $dir<br/>";
     $vehicle->resolve('file', array(
         'source' => $dir,
         'target' => "return MODX_ASSETS_PATH . 'components/';",
     ));
     $builder->putVehicle($vehicle);
+}
+else {
+    print "No asset files found.";
 }
 
 // Core
 $dir = dirname(dirname(__FILE__)).'/core/components/'.PKG_NAME_LOWER;
 if (file_exists($dir) && is_dir($dir)) {
+    print "Adding Core files $dir<br/>";
     $vehicle->resolve('file', array(
         'source' => $dir,
-        'target' => "return MODX_ASSETS_PATH . 'components/';",
+        'target' => "return MODX_CORE_PATH . 'components/';",
     ));
     $builder->putVehicle($vehicle);
 }
+else {
+    print "No core files found.";
+}
 
+// Loose files?  anything floating in the directories
 
 //------------------------------------------------------------------------------
 //! DOCS
 //------------------------------------------------------------------------------
 $dir = dirname(dirname(__FILE__)).'/core/components/'.PKG_NAME_LOWER.'/docs/';
 if (file_exists($dir) && is_dir($dir)) {
-    $docs = array();
-    $files = glob($dir.'{*.html,*.txt}');
+    $docs = array(
+        'readme'=>'No readme defined.',
+        'changelog'=>'No changelog defined.',
+        'license'=>'No license defined.'
+    );
+    $files = glob($dir.'*.{html,txt}',GLOB_BRACE);
     foreach($files as $f) {
         $stub = basename($f,'.txt');
         $stub = basename($stub,'.html');
         $docs[$stub] = file_get_contents($f);
+        print "Adding doc $stub for $f";
     }
 
     if (!empty($docs)) {
         $builder->setPackageAttributes($docs);
     }
+}
+else {
+    print "No docs found in $dir";
 }
 
 
@@ -278,10 +422,13 @@ if (file_exists($dir) && is_dir($dir)) {
 $vehicle = $builder->createVehicle($Category, $cat_attributes);
 $builder->putVehicle($vehicle);
 
-
-
 // Zip up the package
 $builder->pack();
 
-echo '<br/>Package complete. Check your '.MODX_CORE_PATH . 'packages/ directory for the newly created package.';
+// tiles-1.0-pl.transport.zip
+print '<br/>Package complete. Check your '.MODX_CORE_PATH . 'packages/ directory for the newly created package.';
+print '</pre>';
+$zip = PKG_NAME_LOWER.'-'.PKG_VERSION.'-'.PKG_RELEASE.'.transport.zip';
+print MODX_CORE_PATH.'packages/'.$zip;
+//print '<a href="'.MODX_CORE_PATH.'packages/'.$zip.'">Download '.$zip.'</a>';
 /*EOF*/

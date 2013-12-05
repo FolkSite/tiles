@@ -4,7 +4,20 @@
     		onChange: set_coords,
     		onSelect: set_coords
         });
-        $('.datepicker').datepicker();
+        jQuery('.datepicker').datepicker();
+        jQuery('#color').ColorPicker({
+            onSubmit: function(hsb, hex, rgb, el) {
+        		$(el).val(hex);
+        		$(el).css('background-color', '#'+hex);
+        		$(el).ColorPickerHide();
+        	},
+        	onBeforeShow: function () {
+        		$(this).ColorPickerSetColor(this.value);
+        	}
+            })
+            .bind('keyup', function(){
+            	$(this).ColorPickerSetColor(this.value);
+            });
     });
 
     /**
@@ -163,7 +176,7 @@
                                 <label for="url">URL</label>
                                 <input type="text" class="span5" id="url" name="url" value="<?php print htmlspecialchars($data['url']); ?>"/>
                                 <label for="color">Color</label>
-                                <input type="text" class="span4" id="colorpickerField1" name="color" value="<?php print htmlspecialchars($data['color']); ?>"/>
+                                <input type="text" class="span4" id="color" name="color" value="<?php print htmlspecialchars($data['color']); ?>" style="background-color:#<?php print htmlspecialchars($data['color']); ?>;"/>
                                 <div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
                                       <label for="expireson">Expires On</label>
                                       <input class="span4" type="text" id="expireson" name="expireson" value="<?php print htmlspecialchars($data['expireson']); ?>"/>
