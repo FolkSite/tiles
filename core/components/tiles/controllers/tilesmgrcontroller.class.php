@@ -52,7 +52,7 @@ class TilesMgrController{
      *
      */
     public function show_all($args) {
-        return '<textarea rows="60" cols="60" width="800">'.print_r($this->modx->packages,true).'</textarea>';
+    
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/dropzone.css');
            
