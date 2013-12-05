@@ -15,6 +15,7 @@ if ($object->xpdo) {
             break;
         case xPDOTransport::ACTION_INSTALL:
             //$modx->addExtensionPackage(PKG_NAME_LOWER,"[[++core_path]]components/".PKG_NAME_LOWER."/model/");
+            $modx->log(MODX_LOG_LEVEL_INFO, 'Installing Tiles.');
             $core_path = $modx->getOption('core_path');
             $modx->addPackage('tiles',$core_path.'components/'.PKG_NAME_LOWER.'/model/');
             $manager = $modx->getManager();

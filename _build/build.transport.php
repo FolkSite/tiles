@@ -157,9 +157,6 @@ $cat_attributes = array(
 $Category = $modx->newObject('modCategory');
 $Category->set('category', PKG_NAME);
 
-$vehicle = $builder->createVehicle($Category, $cat_attributes);
-$builder->putVehicle($vehicle);
-
 
 //------------------------------------------------------------------------------
 //! Snippets
@@ -258,28 +255,59 @@ else {
     print "No Plugins found in {$dir}\n";
 }
 
-/*
-$Events = array();
+$vehicle = $builder->createVehicle($Category, $cat_attributes);
 
-$Plugin = $modx->newObject('modPlugin');
-$Plugin->fromArray(array(
-    'name' => 'Geocoding',
-    'description' => 'Looks up latitude and longitude coordinates when a page containing location information is saved.',
-    'plugincode' => file_get_contents('../core/components/'.PKG_NAME_LOWER.'/elements/plugins/plugin.geocoding.php'),
-));
+    //------------------------------------------------------------------------------
+    //! Files
+    //------------------------------------------------------------------------------
+    // Assets
+    $dir = dirname(dirname(__FILE__)).'/assets/components/'.PKG_NAME_LOWER;
+    if (file_exists($dir) && is_dir($dir)) {
+        print "Adding Asset files from $dir<br/>";
+        $vehicle->resolve('file', array(
+            'source' => $dir,
+            'target' => "return MODX_ASSETS_PATH . 'components/';",
+        ));
+        //$builder->putVehicle($vehicle);
+    }
+    else {
+        print "No asset files found.";
+    }
+    
+    // Core
+    $dir = dirname(dirname(__FILE__)).'/core/components/'.PKG_NAME_LOWER;
+    if (file_exists($dir) && is_dir($dir)) {
+        print "Adding Core files $dir<br/>";
+        $vehicle->resolve('file', array(
+            'source' => $dir,
+            'target' => "return MODX_CORE_PATH . 'components/';",
+        ));
+        //$builder->putVehicle($vehicle);
+    }
+    else {
+        print "No core files found.";
+    }
 
-// Plugin Events
-$Events['OnDocFormSave'] = $modx->newObject('modPluginEvent');
-$Events['OnDocFormSave']->fromArray(array(
-    'event' => 'OnDocFormSave',
-    'priority' => 0,
-    'propertyset' => 0,
-),'',true,true);
+    //------------------------------------------------------------------------------
+    //! Resolvers
+    //------------------------------------------------------------------------------
+    $dir = dirname(__FILE__).'/resolvers/';
+    $objects = array();
+    if (file_exists($dir) && is_dir($dir)) {
+        print 'Packaging Resolvers from '.$dir."\n";
+        $files = glob($dir.'*.php');
+        foreach($files as $f) {
+            print 'Resolver '.$f."\n";
+            $vehicle->resolve('php', array('source' => $f));
+            //$builder->putVehicle($vehicle);
+        }
+    }
+    else {
+        print "No Resolvers found in {$dir}\n";
+    }
 
-$Plugin->addMany($Events);
+$builder->putVehicle($vehicle);
 
-$Category->addMany($Plugin);
-*/
 
 
 //------------------------------------------------------------------------------
@@ -336,60 +364,6 @@ if (file_exists(dirname(__FILE__).'/data/transport.menus.php')) {
     }
 }
 
-//------------------------------------------------------------------------------
-//! Schema?
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//! Resolvers
-//------------------------------------------------------------------------------
-$dir = dirname(__FILE__).'/resolvers/';
-$objects = array();
-if (file_exists($dir) && is_dir($dir)) {
-    print 'Packaging Resolvers from '.$dir."\n";
-    $files = glob($dir.'*.php');
-    foreach($files as $f) {
-        print 'Resolver '.$f."\n";
-        $vehicle->resolve('php', array('source' => $file));
-        $builder->putVehicle($vehicle);
-    }
-}
-else {
-    print "No Resolvers found in {$dir}\n";
-}
-
-
-//------------------------------------------------------------------------------
-//! Files
-//------------------------------------------------------------------------------
-// Assets
-$dir = dirname(dirname(__FILE__)).'/assets/components/'.PKG_NAME_LOWER;
-if (file_exists($dir) && is_dir($dir)) {
-    print "Adding Asset files from $dir<br/>";
-    $vehicle->resolve('file', array(
-        'source' => $dir,
-        'target' => "return MODX_ASSETS_PATH . 'components/';",
-    ));
-    $builder->putVehicle($vehicle);
-}
-else {
-    print "No asset files found.";
-}
-
-// Core
-$dir = dirname(dirname(__FILE__)).'/core/components/'.PKG_NAME_LOWER;
-if (file_exists($dir) && is_dir($dir)) {
-    print "Adding Core files $dir<br/>";
-    $vehicle->resolve('file', array(
-        'source' => $dir,
-        'target' => "return MODX_CORE_PATH . 'components/';",
-    ));
-    $builder->putVehicle($vehicle);
-}
-else {
-    print "No core files found.";
-}
-
-// Loose files?  anything floating in the directories
 
 //------------------------------------------------------------------------------
 //! DOCS
@@ -418,9 +392,6 @@ else {
 }
 
 
-// Add everything we put into the category
-$vehicle = $builder->createVehicle($Category, $cat_attributes);
-$builder->putVehicle($vehicle);
 
 // Zip up the package
 $builder->pack();
