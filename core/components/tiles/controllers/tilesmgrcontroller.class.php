@@ -246,9 +246,12 @@ class TilesMgrController{
         
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url.'components/tiles/css/datepicker.css');
+        $this->modx->regClientCSS($this->assets_url.'components/tiles/css/colorpicker.css');
+
         $this->modx->regClientStartupScript($this->assets_url . 'components/tiles/js/jquery-2.0.3.min.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/bootstrap-datepicker.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jcrop.js');  
+        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/colorpicker.js');  
         $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/dropzone.js');      
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var connector_url = "'.$this->connector_url.'";
