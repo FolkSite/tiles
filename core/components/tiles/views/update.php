@@ -15,12 +15,17 @@
         var values = jQuery('#update_tile').serialize();
     	var url = connector_url + 'save';
 
-	    jQuery.post( url+"&action=update", values, function(data){
+	    jQuery.post( url+"&action="+action, values, function(data){
             data = jQuery.parseJSON(data);
+            console.log(data);
 	        jQuery('#msg').show();
             if (data.success) {
-               jQuery('#tiles-result').html('Success');
-               jQuery('#msg').addClass('success');
+                // Redirect to the real update page
+                if (action == 'create') {
+                    window.location = "<?php print $data['mgr_controller_url'] ?>update&id="+data.id;
+                }
+                jQuery('#tiles-result').html('Success');
+                jQuery('#msg').addClass('success');
             }
             else {
                jQuery('#tiles-result').html('Error');                
@@ -91,10 +96,14 @@
     	var url = connector_url + 'image_crop';
 
 	    jQuery.post( url, values, function(data){
-            var url = connector_url + "get_image_tag&id=" + jQuery('#id').val();
-            jQuery.post( url, function(data){
-                jQuery("#target_image").html(data);
-            });
+	       data = jQuery.parseJSON(data);
+            if (data.success) {
+                console.log(data.img);
+                jQuery("#target_image").html(data.img);
+            }
+            else {
+                alert(data.msg);
+            }
 	    });
 	    //e.preventDefault();
 //    })
@@ -112,17 +121,35 @@
     
     <div class="tiles-header clearfix">
         <div class="header-title">
-            <h2>Update Tiles</h2>
+            <?php
+            if ($data['id']):
+            ?>
+                <h2 id="tile_header">Update <?php print (trim($data['title']))? htmlspecialchars($data['title']):'Tile'; ?> 
+                (<?php print $data['id']; ?>)</h2>
+            <?php
+            else:
+            ?>
+                <h2 id="tile_header">Create Tile</h2>
+            <?php
+            endif;
+            ?>
         </div>
         <div class="buttons-wrapper">
                <a href="#" onclick="javascript:save_tile(); return false;" class="btn">Save</a>
                 <a href="<?php print $data['mgr_controller_url'] ?>show_all" class="btn">Close</a>
-                <a href="#" onclick="javascript:delete_tile(); return false;" class="btn">Delete</a>
+                <?php
+                // Delete only available for existing tiles
+                $style = '';
+                if (!$data['id']) {
+                    $style = "display: none;";
+                }
+                ?>
+                <a href="#" id="delete_button" style="<?php print $style; ?>" onclick="javascript:delete_tile(); return false;" class="btn">Delete</a>
         </div>
     </div>
     
          <form id="update_tile" action="" method="post" class="clearfix">
-            <input type="hidden" name="id" value="<?php print $data['id']; ?>" />
+            <input type="hidden" id="id" name="id" value="<?php print $data['id']; ?>" />
             <div class="well">
 
                 <table class="table no-top-border">
@@ -171,7 +198,6 @@
                                         This div handles image swaps
                                         */
                                         ?>
-                                        <?php print $data['wide_load']; ?>
                                          <?php
                                             if ($data['image_location']):
                                             ?>

@@ -39,7 +39,7 @@ jQuery(function() {
 			</div>
 			<div class="buttons-wrapper">
 		            <button class="btn" id="tiles_save_order">Save Order</button>
-		            <a class="btn" href="<?php print $data['mgr_controller_url']; ?>create">Create New Tile</a>
+		            <a class="btn" href="<?php print $data['mgr_controller_url']; ?>update">Create New Tile</a>
 		        	<a class="btn" href="#">Close</a>
 			</div>
 		</div>
