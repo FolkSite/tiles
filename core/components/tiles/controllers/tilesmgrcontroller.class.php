@@ -217,6 +217,32 @@ class TilesMgrController{
         
        return json_encode($out); 
     }
+
+    /**
+    * Function Comment Here
+    * @param
+    * @return
+    **/
+    public function create() 
+    {
+        // Put Code here
+        $data = array();
+        $data['mgr_controller_url'] = $this->mgr_controller_url;
+        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
+        $this->modx->regClientCSS($this->assets_url.'components/tiles/css/datepicker.css');
+        $this->modx->regClientCSS($this->assets_url.'components/tiles/css/colorpicker.css');
+
+        $this->modx->regClientStartupScript($this->assets_url . 'components/tiles/js/jquery-2.0.3.min.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/bootstrap-datepicker.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jcrop.js');  
+        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/colorpicker.js');  
+        $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var connector_url = "'.$this->connector_url.'";
+            </script>
+        ');
+
+        return $this->_load_view('create.php',$data);
+    }
     /**
      * Used to update a single tile
      *

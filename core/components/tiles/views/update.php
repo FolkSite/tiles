@@ -121,7 +121,7 @@
     
     <div class="tiles-header clearfix">
         <div class="header-title">
-            <h2>Tiles</h2>
+            <h2>Update Tiles</h2>
         </div>
         <div class="buttons-wrapper">
                <a href="#" onclick="javascript:save_tile(); return false;" class="btn">Save</a>
@@ -201,9 +201,11 @@
                             
                                         
                                         <span class="btn" onclick="javascript:crop(); return false;">Crop</span>
-                                    <?php
-                                    endif;
-                                    ?>
+                                    <?php else: ?>
+                                     <div id="target_image">
+                                        <div class="empty-img-big"></div>
+                                    </div>
+                                    <?php endif; ?>
                                     
 
                             </div>
