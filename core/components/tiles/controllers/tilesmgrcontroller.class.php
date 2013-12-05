@@ -284,7 +284,7 @@ class TilesMgrController{
     		var connector_url = "'.$this->connector_url.'";
             var assets_url = "'.MODX_ASSETS_URL.'";
             jQuery(document).ready(function() {
-                var myDropzone = new Dropzone("div#image_dropzone", 
+                var myDropzone = new Dropzone("div#image_dropzone_update", 
                     {
                         url: connector_url+"image_upload&id='.$id.'"
                     }

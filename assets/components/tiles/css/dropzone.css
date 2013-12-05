@@ -1,4 +1,9 @@
 /* The MIT License */
+#image_dropzone_update {
+  border: 1px solid #ddd;
+  padding: 20px;
+  text-align: center;
+}
 .dropzone-previews,
 .dropzone-previews * {
   -webkit-box-sizing: border-box;

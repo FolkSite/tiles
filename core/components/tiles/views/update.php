@@ -137,79 +137,82 @@
                 <table class="table no-top-border">
                     <tbody>
                          <tr>
-                            <td>
+                            <td style="vertical-align: top;">
                                  <label for="title">Title</label>
-                                <input type="text" class="span8" id="title" name="title" value="<?php print htmlspecialchars($data['title']); ?>"/>
+                                <input type="text" class="span5" id="title" name="title" value="<?php print htmlspecialchars($data['title']); ?>"/>
                                  <label for="description">Description</label>
-                                <input type="text" class="span8" id="description" name="description" value="<?php print htmlspecialchars($data['description']); ?>"/>
+                                <input type="text" class="span5" id="description" name="description" value="<?php print htmlspecialchars($data['description']); ?>"/>
                                 <label for="url">URL</label>
-                                <input type="text" class="span8" id="url" name="url" value="<?php print htmlspecialchars($data['url']); ?>"/>
-                                 <label for="type">Type</label>
-                                <input class="span8" type="text" id="type" name="type" value="<?php print htmlspecialchars($data['type']); ?>"/>
-                                <label for="price">Price</label>
-                                <input class="span8" type="text" id="price" name="price" value="<?php print htmlspecialchars($data['price']); ?>"/>
-                                <label for="prev_price">Prev. Price</label>
-                                <input class="span8" type="text" id="prev_price" name="prev_price" value="<?php print htmlspecialchars($data['prev_price']); ?>"/>
-                               
-                                <label for="group">Group</label>
-                                 <input class="span8" type="text" id="group" name="group" value="<?php print htmlspecialchars($data['group']); ?>"/>
-                                <label for="content">Content</label>
-                                <textarea id="content" class="span8"  cols="60" rows="7" name="content"><?php print htmlspecialchars($data['content']); ?></textarea>
-                            </td>
-                            <td>
+                                <input type="text" class="span5" id="url" name="url" value="<?php print htmlspecialchars($data['url']); ?>"/>
                                 <label for="color">Color</label>
                                 <input type="text" class="span4" id="colorpickerField1" name="color" value="<?php print htmlspecialchars($data['color']); ?>"/>
-                                
                                 <div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
                                       <label for="expireson">Expires On</label>
-                                      <input class="span2" type="text" id="expireson" name="expireson" value="<?php print htmlspecialchars($data['expireson']); ?>"/>
+                                      <input class="span4" type="text" id="expireson" name="expireson" value="<?php print htmlspecialchars($data['expireson']); ?>"/>
 
                                       <span class="add-on"><i class="icon icon-calendar"></i></span>
                                 </div>
+                                 <label for="type">Type</label>
+                                <input class="span5" type="text" id="type" name="type" value="<?php print htmlspecialchars($data['type']); ?>"/>
+                                <label for="price">Price</label>
+                                <input class="span5" type="text" id="price" name="price" value="<?php print htmlspecialchars($data['price']); ?>"/>
+                                <label for="prev_price">Prev. Price</label>
+                                <input class="span5" type="text" id="prev_price" name="prev_price" value="<?php print htmlspecialchars($data['prev_price']); ?>"/>
+                               
+                                <label for="group">Group</label>
+                                 <input class="span5" type="text" id="group" name="group" value="<?php print htmlspecialchars($data['group']); ?>"/>
+                                 
+                                
+                                
+                            </td>
+                            <td style="vertical-align: top;">
+                                
 
                                   <label for="image_title">Image Title</label>
-                                <input type="text" class="span4" id="image_title" name="image_title" value="<?php print htmlspecialchars($data['image_title']); ?>"/>
+                                <input type="text" class="span6" id="image_title" name="image_title" value="<?php print htmlspecialchars($data['image_title']); ?>"/>
                                 <label for="image_alt">Image Alt</label>
-                                <input type="text" class="span4" id="image_alt" name="image_alt" value="<?php print htmlspecialchars($data['image_alt']); ?>"/>
-                                 <div id="image_stuff">
-                                <div id="image_dropzone">
-                                    <div class="dz-default dz-message"><span>Drop files here to Update Image</span></div>
-                                </div>   <br>
-                                <?php 
-                                /*
-                                We put in a div here as the dropzone in case the image is too small.
-                                This div handles image swaps
-                                */
-                                ?>
-                                <?php print $data['wide_load']; ?>
-                                 <?php
-                                    if ($data['image_location']):
-                                    ?>
-                                        
-                                        <div id="target_image">
-                                            <?php include dirname(__FILE__).'/image.php'; ?>
-                                        </div>
-                                        
-                                        <input type="hidden" id="x" name="x" />
-                                        <input type="hidden" id="x2" name="x2" />
-                                        <input type="hidden" id="y" name="y" />
-                                        <input type="hidden" id="y2" name="y2" />
-                                        <input type="hidden" id="w" name="w" />
-                                        <input type="hidden" id="h" name="h" />
-                                        <input type="hidden" id="width" name="width" value="<?php print $data['width']; ?>"/>
-                                        <input type="hidden" id="height" name="height" value="<?php print $data['height']; ?>"/>
-                            
-                                        
-                                        <span class="btn" onclick="javascript:crop(); return false;">Crop</span>
-                                    <?php else: ?>
-                                     <div id="target_image">
-                                        <div class="empty-img-big"></div>
+                                <input type="text" class="span6" id="image_alt" name="image_alt" value="<?php print htmlspecialchars($data['image_alt']); ?>"/>
+                                 <div class="span6" id="image_stuff">
+                                     <div id="image_dropzone_update">
+                                        <?php 
+                                        /*
+                                        We put in a div here as the dropzone in case the image is too small.
+                                        This div handles image swaps
+                                        */
+                                        ?>
+                                        <?php print $data['wide_load']; ?>
+                                         <?php
+                                            if ($data['image_location']):
+                                            ?>
+                                                
+                                                <div id="target_image">
+                                                    <?php include dirname(__FILE__).'/image.php'; ?>
+                                                </div>
+                                                
+                                                <input type="hidden" id="x" name="x" />
+                                                <input type="hidden" id="x2" name="x2" />
+                                                <input type="hidden" id="y" name="y" />
+                                                <input type="hidden" id="y2" name="y2" />
+                                                <input type="hidden" id="w" name="w" />
+                                                <input type="hidden" id="h" name="h" />
+                                                <input type="hidden" id="width" name="width" value="<?php print $data['width']; ?>"/>
+                                                <input type="hidden" id="height" name="height" value="<?php print $data['height']; ?>"/>
+                                            <?php else: ?>
+                                             <div id="target_image">
+                                                <div class="span6 empty-img-big"></div>
+                                            </div>
+                                            <?php endif; ?>
+                                        <div class="dz-default dz-message"><span>Drop files here to Update Image</span></div>
                                     </div>
-                                    <?php endif; ?>
-                                    
+                                </div>
+                                <span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>
 
-                            </div>
-
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                 <label for="content">Content</label>
+                                <textarea id="content" class="span12"  rows="7" name="content"><?php //print htmlspecialchars($data['content']); ?></textarea>
                             </td>
                         </tr>
                     </tbody>
