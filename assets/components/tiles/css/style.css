@@ -594,6 +594,9 @@ img {
 }
 .lw-item-text-container p {
 	margin: 8px 10px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .jcarousel {
     position: relative;

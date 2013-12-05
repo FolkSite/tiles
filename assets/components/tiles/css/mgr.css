@@ -4113,10 +4113,11 @@ button.close {
 
 #product_images li.li_product_image {
   float: left;
-  padding: 5px;
-  margin: 8px;
+  padding: 2px;
+  margin: 5px;
   position: relative;
   border-radius: 5px;
+  width: 140px;
 }
 
 .li_product_image .edit-img {
@@ -4165,6 +4166,7 @@ button.close {
 .no-top-border td {
   border: none;
 }
+
 
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
