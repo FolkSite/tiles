@@ -60,7 +60,7 @@
                 <table class="table no-top-border">
                     <tbody>
                          <tr>
-                            <td>
+                            <td style="vertical-align: top;">
                                  <label for="title">Title</label>
                                 <input type="text" class="span8" id="title" name="title" value=""/>
                                  <label for="description">Description</label>
@@ -69,14 +69,13 @@
                                
                                 <label for="group">Group</label>
                                  <input class="span8" type="text" id="group" name="group" value=""/>
-                                <label for="content">Content</label>
-                                <textarea id="content" class="span8"  cols="60" rows="7" name="content"></textarea>
-                            </td>
-                            <td>
-                                <label for="url">URL</label>
-                                <input type="text" class="span4" id="url" name="url" value=""/>
+                                  <label for="url">URL</label>
+                                <input type="text" class="span8" id="url" name="url" value=""/>
                                  <label for="type">Type</label>
-                                <input class="span4" type="text" id="type" name="type" value=""/>
+                                <input class="span8" type="text" id="type" name="type" value=""/>
+                            </td>
+                            <td style="vertical-align: top;">
+                               
                                 <label for="price">Price</label>
                                 <input class="span4" type="text" id="price" name="price" value=""/>
                                 <label for="prev_price">Prev. Price</label>
@@ -92,6 +91,12 @@
                                 </div>
 
                             </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">
+                              <label for="content">Content</label>
+                              <textarea id="content" class="span12" rows="7" name="content"></textarea>
+                          </td>
                         </tr>
                     </tbody>
                 </table>
