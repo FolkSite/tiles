@@ -5,7 +5,7 @@
 			<img src="<?php print MODX_ASSETS_URL . $data['image_location']; ?>" alt="<?php print $data['image_location']; ?>" height="100" width="100" />
 			<div class="mask">
 				<p></p>
-				<!--a href="<?php print $data['mgr_controller_url']; ?>update&id=<?php print $data['id']; ?>" class="link info"></a--><a href="<?php print $data['mgr_controller_url']; ?>update&id=<?php print $data['id']; ?>" class="lightbox zoom info"></a>
+				<!--a href="<?php print $data['mgr_controller_url']; ?>update&id=<?php print $data['id']; ?>" class="link info"></a--><a href="<?php print $data['mgr_controller_url']; ?>update&id=<?php print $data['id']; ?>" class="link info"></a>
 			</div>
 		</div>
 		<div class="lw-item-caption-container">

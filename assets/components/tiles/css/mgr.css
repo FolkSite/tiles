@@ -14,7 +14,6 @@
 
 .table {
   width: 100%;
-  margin: 20px 0px;
 }
 .table th,
 .table td {
@@ -311,7 +310,9 @@ textarea {
 }
 label {
   display: block;
-  margin-bottom: 5px;
+  color: #707070;
+  font-size: 12px;
+  font-weight: bold;
 }
 select,
 textarea,
@@ -333,13 +334,13 @@ input[type="color"],
   display: inline-block;
   height: 20px;
   padding: 4px 6px;
-  margin-bottom: 9px;
   font-size: 14px;
   line-height: 20px;
   color: #555555;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  margin-bottom: 5px;
 }
 input,
 textarea,
@@ -365,15 +366,13 @@ input[type="search"],
 input[type="tel"],
 input[type="color"],
 .uneditable-input {
-  background-color: #ffffff;
   border: 1px solid #cccccc;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-transition: border linear .2s, box-shadow linear .2s;
-  -moz-transition: border linear .2s, box-shadow linear .2s;
-  -o-transition: border linear .2s, box-shadow linear .2s;
-  transition: border linear .2s, box-shadow linear .2s;
+  background-color: #fbfbfb;
+
+
 }
 textarea:focus,
 input[type="text"]:focus,
@@ -4114,10 +4113,10 @@ button.close {
 
 #product_images li.li_product_image {
   float: left;
-  border: 1px solid #acacac;
   padding: 5px;
-  margin: 10px;
+  margin: 8px;
   position: relative;
+  border-radius: 5px;
 }
 
 .li_product_image .edit-img {
@@ -4160,6 +4159,11 @@ button.close {
 #tiles-result {
   font-weight: bold;
   font-weight: 14px;
+}
+
+
+.no-top-border td {
+  border: none;
 }
 
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.

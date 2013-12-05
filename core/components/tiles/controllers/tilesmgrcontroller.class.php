@@ -53,6 +53,8 @@ class TilesMgrController{
      */
     public function show_all($args) {
     
+        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/style.css');
+
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/dropzone.css');
            
@@ -239,9 +241,11 @@ class TilesMgrController{
         }
         
         $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
+        $this->modx->regClientCSS($this->assets_url.'components/tiles/css/datepicker.css');
         $this->modx->regClientStartupScript($this->assets_url . 'components/tiles/js/jquery-2.0.3.min.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/dropzone.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jcrop.js');        
+        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/bootstrap-datepicker.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jcrop.js');  
+        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/dropzone.js');      
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var connector_url = "'.$this->connector_url.'";
             var assets_url = "'.MODX_ASSETS_URL.'";
