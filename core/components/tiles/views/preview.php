@@ -5,7 +5,7 @@
     <img data-dz-thumbnail />
   </div>
   <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
-  <div class="dz-success-mark"><span>Ok</span></div>
-  <div class="dz-error-mark"><span>X</span></div>
+  <div class="dz-success-mark"><span></span></div>
+  <div class="dz-error-mark"><span></span></div>
   <div class="dz-error-message"><span data-dz-errormessage></span></div>
 </div>

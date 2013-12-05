@@ -12,7 +12,7 @@ jQuery(function() {
 	    	if(data.success == true) {
 	    		jQuery('#tiles-result').html('Success');
 	    	} else{
-	    		$('#tiles-result').html('Failed');
+	    		jQuery('#tiles-result').html('Failed');
 	    	}
 	    	jQuery('#tiles-result-msg').html(data.msg);
 	    	jQuery(".tiles-msg").delay(3200).fadeOut(300);

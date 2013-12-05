@@ -91,19 +91,10 @@
     	var url = connector_url + 'image_crop';
 
 	    jQuery.post( url, values, function(data){
-//	       alert('Back!');
-            // Close modal window or redirect to the list.
-/*
-	    	jQuery('.moxy-msg').show();
-	    	data = jQuery.parseJSON(data);
-	    	if(data.success == true) {
-	    		jQuery('#moxy-result').html('Success');
-	    	} else{
-	    		jQuery('#moxy-result').html('Failed');
-	    	}
-	    	jQuery('#moxy-result-msg').html(data.msg);
-	    	jQuery(".moxy-msg").delay(3200).fadeOut(300);
-*/
+            var url = connector_url + "get_image_tag&id=" + jQuery('#id').val();
+            jQuery.post( url, function(data){
+                jQuery("#target_image").html(data);
+            });
 	    });
 	    //e.preventDefault();
 //    })

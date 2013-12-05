@@ -349,12 +349,15 @@ class TilesMgrController{
                 }
             }
             // Image already exists? No problem, we just reference it.
-            // TODO: rename and get on with it
+            // TODO: rename and get on with it?
             if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
                 $out['success'] = true;
                 $out['msg'] = 'File already exists: '.MODX_ASSETS_PATH.$rel_file;
                 $this->modx->log(MODX_LOG_LEVEL_DEBUG, $out['msg']);
-                return json_encode($out);
+                $ext = pathinfo(MODX_ASSETS_PATH.$rel_file, PATHINFO_EXTENSION);
+                //return json_encode($out); // this pre
+                $rel_file = $this->upload_dir.basename(tempnam(dirname(MODX_ASSETS_PATH.$rel_file), '')).'.'.$ext;
+                
             }
             if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
                 $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
@@ -397,8 +400,100 @@ class TilesMgrController{
      */
     public function image_crop($args) { 
         $this->modx->log(1, print_r($args,true));
-        // http://www.php.net/manual/en/function.imagecopy.php
         
+        $out = array(
+            'success' => true,
+            'msg' => ''
+        );
+        
+        $id = (int) $this->modx->getOption('id', $args);
+        $Tile = $this->modx->getObject('Tile', $id);
+        
+        if (!$Tile) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile and Image not found.';
+            return json_encode($out);
+        }
+        // http://www.php.net/manual/en/function.imagecopy.php
+        $src = MODX_ASSETS_PATH . $Tile->get('image_location');
+        if (!file_exists($src)) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile ('.$id.') Image not found: '.$src;
+            return json_encode($out);            
+        }
+        
+        $srcImg = '';
+        $ext = strtolower(substr($src, -4));
+        $image_func = '';
+        $quality = null; // different vals for different funcs
+        switch ($ext) {
+            case '.gif':
+                $srcImg = @imagecreatefromgif($src);
+                $image_func = 'imagegif';
+                break;
+            case '.jpg':
+            case 'jpeg':
+                $srcImg = @imagecreatefromjpeg($src);
+                $image_func = 'imagejpeg';
+                $quality = 100;
+                break;
+            case '.png':
+                $srcImg = @imagecreatefrompng($src);
+                $image_func = 'imagepng';
+                $quality = 0;
+                break;
+            default:
+                $out['success'] = false;
+                $out['msg'] = 'Tile ('.$id.') Unrecognized extension: '.$ext;
+                return json_encode($out);                            
+        }
+        
+        if (!$srcImg) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile ('.$id.') could not create image: '.$src;
+            return json_encode($out);                        
+        }
+        
+        // Cleared for launch.
+        $ratio = 1;
+        if ($Tile->get('width') > $this->max_image_width) {
+            $ratio = $Tile->get('width') / $this->max_image_width;
+        }
+
+        $src_x = (int) $ratio * $this->modx->getOption('x',$args);
+        $src_y = (int) $ratio * $this->modx->getOption('y',$args);
+        $src_w = (int) $ratio * $this->modx->getOption('w',$args) + $src_x;
+        $src_h = (int) $ratio * $this->modx->getOption('h',$args) + $src_y;
+
+        // Remember: at this point, if the user selects the full width of the *displayed*
+        // image, it is not necessarily equal to the dimensions of the original image.
+        $new_w = $this->modx->getOption('w',$args);
+        $new_h = $this->modx->getOption('h',$args);
+        $destImg = imagecreatetruecolor($src_w, $src_h);
+        
+        
+        $this->modx->log(1, "Ratio: $ratio -- $src_x, $src_y, $src_w, $src_h");
+//        exit;
+        if (!imagecopy($destImg, $srcImg, 0, 0, $src_x, $src_y, $src_w, $src_h)) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile ('.$id.') could not crop image: '.$src;
+            return json_encode($out);                                    
+        }
+        
+        if (!$image_func($destImg,MODX_ASSETS_PATH.$Tile->get('image_location'),$quality)) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile ('.$id.') could not save cropped image: '.$src;
+            return json_encode($out);                                    
+        }
+        
+//      $size = getimagesize(MODX_ASSETS_PATH.$Tile->get('image_location'));
+//      $this->modx->log(1,print_r($size,true));
+        $Tile->set('height', $new_h);
+        $Tile->set('width', $new_w);
+        $Tile->set('size', filesize(MODX_ASSETS_PATH.$Tile->get('image_location')));
+        $Tile->save();
+        $out['msg'] = 'Image cropped successfully.';
+        return json_encode($out);
     }
     
     /**
