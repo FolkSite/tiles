@@ -592,7 +592,8 @@ img {
 	font-size: 10px;
 	line-height: 14px;
 }
-.lw-item-text-container p {
+.lw-item-text-container p,
+.lw-item-caption-container p {
 	margin: 8px 10px;
 	white-space: nowrap;
 	overflow: hidden;
