@@ -14,7 +14,9 @@
 		</div>
 		<div class="tile-info">
 			<div class="lw-item-caption-container">
+
 				<p><a href="<?php print $data['mgr_controller_url']; ?>update&id=<?php print $data['id']; ?>" ><span class="bold"><?php print (trim($data['title']))? htmlspecialchars($data['title']):'Title'; ?></a></p>
+
 			</div>
 			<div class="lw-item-text-container">
 				<p><?php print (trim($data['description']))? htmlspecialchars($data['description']):'enter description here...'; ?></p>

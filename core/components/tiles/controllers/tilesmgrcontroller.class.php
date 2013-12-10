@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package tiles
+ */
 class TilesMgrController{
     
     public $modx;
@@ -127,21 +130,17 @@ class TilesMgrController{
     }
     
     /**
-     * Save the tile
+     * Save the tile. $args includes all posted data. "action" determines the action here.
      *
      */
     public function save($args) {
+
         $this->modx->log(MODX_LOG_LEVEL_DEBUG,'Tile save: '.print_r($args,true));
 
-/*
-        if (!is_object($this->modx->user)) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save 401 '.print_r($args,true));
-            return $this->_send401();
-        }
-*/
         $out = array(
             'success' => true,
             'msg' => '',
+            'id' => ''
         );
         
         $action = $this->modx->getOption('action', $args);
@@ -158,12 +157,14 @@ class TilesMgrController{
                 $Tile->fromArray($args);
                 if (!$Tile->save()) {
                     $out['success'] = false;
-                    $out['msg'] = 'Failed to update Tile.';    
+                    $out['msg'] = 'Failed to update Tile.';
+                    $out['id'] = $Tile->get('id');
                 }
                 $out['msg'] = 'Tile updated successfully.';    
                 break;
             case 'delete':
-                $Tile = $this->modx->getObject('Tile',$this->modx->getOption('id', $args));
+                $id = (int) $this->modx->getOption('id', $args);
+                $Tile = $this->modx->getObject('Tile',$id);
                 if (!$Tile) {
                     $out['success'] = false;
                     $out['msg'] = 'Invalid Tile.';
@@ -179,6 +180,7 @@ class TilesMgrController{
                     return json_encode($out);
                 }
                 $out['msg'] = 'Tile deleted successfully.';    
+                $out['id'] = $id;
                 break;
             case 'create':
             default:
@@ -188,14 +190,28 @@ class TilesMgrController{
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Tile.';    
                 }
-                $out['msg'] = 'Tile created successfully.';    
+                $out['msg'] = 'Tile created successfully.';
+                $out['id'] = $Tile->get('id');
         }
                 
         return json_encode($out);
     }
-    
+
+    /**
+     * Used after drag-and-drop sorting on the main grid page.
+     * We expect each item in the grid to be inside a form, each
+     * with an associated hidden field like this:
+     *  <input type="hidden" name="tiles[]" value="{$id}" />
+     *
+     * So we get an array of the tile ids in the order in which they
+     * should appear.
+     *
+     * TODO: we're loading and updating these one by one... might be 
+     * more efficient to use getCollection instead.
+     *
+     */    
     public function save_order($args) {
-        $this->modx->log(1, print_r($args,true));
+
         $tiles = $this->modx->getOption('tiles',$args,array());
         $out = array(
             'success' => true,
@@ -219,45 +235,27 @@ class TilesMgrController{
     }
 
     /**
-    * Function Comment Here
-    * @param
-    * @return
-    **/
-    public function create() 
-    {
-        // Put Code here
-        $data = array();
-        $data['mgr_controller_url'] = $this->mgr_controller_url;
-        $this->modx->regClientCSS($this->assets_url . 'components/tiles/css/mgr.css');
-        $this->modx->regClientCSS($this->assets_url.'components/tiles/css/datepicker.css');
-        $this->modx->regClientCSS($this->assets_url.'components/tiles/css/colorpicker.css');
-
-        $this->modx->regClientStartupScript($this->assets_url . 'components/tiles/js/jquery-2.0.3.min.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/bootstrap-datepicker.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/jcrop.js');  
-        $this->modx->regClientStartupScript($this->assets_url.'components/tiles/js/colorpicker.js');  
-        $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            var connector_url = "'.$this->connector_url.'";
-            </script>
-        ');
-
-        return $this->_load_view('create.php',$data);
-    }
-    /**
-     * Used to update a single tile
-     *
-     *
+     * Used to create or update a single tile.
      *
      */
     public function update($args) {
+        
         $id = (int) $this->modx->getOption('id', $args);
         
-        $Tile = $this->modx->getObject('Tile',$id);
-        
-        if (!$Tile) {
-            return 'Invalid id.';
+        $Tile = '';
+        // Update/edit
+        if ($id) {
+            $Tile = $this->modx->getObject('Tile',$id);
+            if (!$Tile) {
+                return 'Invalid id.';
+            }
+            $action = 'update';
         }
-        
+        else {
+            $Tile = $this->modx->newObject('Tile');
+            $action = 'create';
+        }
+                
         $data = $Tile->toArray();
         $data['mgr_controller_url'] = $this->mgr_controller_url;
         $data['wide_load'] = '';
@@ -266,7 +264,7 @@ class TilesMgrController{
         if ($data['width'] > $this->max_image_width) {
             $data['wide_load'] = 'Warning! This image is larger than it appears.';
             $ratio = $this->max_image_width / $data['width'];
-            $data['visible_height'] = $data['height'] * $ratio;
+            $data['visible_height'] = (int) ($data['height'] * $ratio);
             $data['visible_width'] = $this->max_image_width;
         }
         
@@ -283,24 +281,29 @@ class TilesMgrController{
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var connector_url = "'.$this->connector_url.'";
             var assets_url = "'.MODX_ASSETS_URL.'";
+            var action = "'.$action.'";
             jQuery(document).ready(function() {
                 var myDropzone = new Dropzone("div#image_dropzone_update", 
                     {
                         url: connector_url+"image_upload&id='.$id.'"
                     }
                 );
-                myDropzone.on("success", function(file) {
+                myDropzone.on("success", function(file,response) {
                     // Refresh the image on success
-                    var url = connector_url + "get_image_tag&id='.$id.'";
-            	    jQuery.post( url, function(data){
-                        jQuery("#target_image").html(data);
-                        jQuery(".dz-preview").remove();
-	               });
+                    response = jQuery.parseJSON(response);
+                    var url = connector_url + "get_image_tag&id="+response.id;
+                    jQuery("#id").val(response.id);
+                    var title = jQuery("#title").val();
+                    jQuery("#delete_button").show();
+                    jQuery("#tile_header").html("Update "+ title + " ("+response.id+")");
+                    action = "update";
+                    jQuery("#target_image").html(response.img);
+                    jQuery(".dz-preview").remove();
                 });
             });
     		</script>
     	');
-        
+
         return $this->_load_view('update.php',$data);
         
     }
@@ -319,7 +322,8 @@ class TilesMgrController{
         $out = array(
             'success' => true,
             'msg' => '',
-            'id' => ''
+            'id' => '',
+            'img' => ''
         );
 
         $tile_id = (int) $this->modx->getOption('id',$args);
@@ -349,12 +353,19 @@ class TilesMgrController{
                 }
             }
             // Image already exists? No problem, we just reference it.
-            // TODO: rename and get on with it
+            // TODO: rename and get on with it?
             if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
                 $out['success'] = true;
                 $out['msg'] = 'File already exists: '.MODX_ASSETS_PATH.$rel_file;
                 $this->modx->log(MODX_LOG_LEVEL_DEBUG, $out['msg']);
-                return json_encode($out);
+                $ext = pathinfo(MODX_ASSETS_PATH.$rel_file, PATHINFO_EXTENSION);
+                //return json_encode($out); // this pre
+                $key = '';
+                $keys = range('a','z');
+                for ($i = 0; $i < 5; $i++) {
+                    $key .= $keys[array_rand($keys)];
+                }
+                $rel_file = $this->upload_dir.$key.'.'.$ext;
             }
             if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
                 $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
@@ -364,10 +375,7 @@ class TilesMgrController{
                 $out['msg'] = 'Upload failed. Check your permissions. '.MODX_ASSETS_PATH.$rel_file;
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, $out['msg']);
                 return json_encode($out);
-            }
-            //$out['rel_file'] = $rel_file;
-            //$out['file_size'] = $_FILES['file']['size'];
-            
+            }            
         }
         
         list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
@@ -385,20 +393,124 @@ class TilesMgrController{
             $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved tile '.$Tile->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
             $out['id'] = $Tile->get('id');
             $out['msg'] = 'Successfully saved image';
+            $out['img'] = $this->get_image_tag(array('id'=>$Tile->get('id')));
         }
         
         return json_encode($out);
     }
     
     /**
-     * Used when cropping an image
-     *
-     *
+     * Crop an image in place (original file is destructively edited).
+     * In this AddOn, an image MUST be rep'd by a Tile, so the id must be set.
+     * We return an <img> tag as well to save the hastle of another ajax post.
+     * 
+     * @params array $args including key for id
+     * @return string JSON array
      */
     public function image_crop($args) { 
-        $this->modx->log(1, print_r($args,true));
-        // http://www.php.net/manual/en/function.imagecopy.php
         
+        $out = array(
+            'success' => true,
+            'msg' => '',
+            'img' => ''
+        );
+        
+        $id = (int) $this->modx->getOption('id', $args);
+        $Tile = $this->modx->getObject('Tile', $id);
+        
+        if (!$Tile) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile and Image not found.';
+            return json_encode($out);
+        }
+        // http://www.php.net/manual/en/function.imagecopy.php
+        $src = MODX_ASSETS_PATH . $Tile->get('image_location');
+        if (!file_exists($src)) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile ('.$id.') Image not found: '.$src;
+            return json_encode($out);            
+        }
+        
+        $srcImg = '';
+        $ext = strtolower(substr($src, -4));
+        $image_func = '';
+        $quality = null; // different vals for different funcs
+        switch ($ext) {
+            case '.gif':
+                $srcImg = @imagecreatefromgif($src);
+                $image_func = 'imagegif';
+                break;
+            case '.jpg':
+            case 'jpeg':
+                $srcImg = @imagecreatefromjpeg($src);
+                $image_func = 'imagejpeg';
+                $quality = 100;
+                break;
+            case '.png':
+                $srcImg = @imagecreatefrompng($src);
+                $image_func = 'imagepng';
+                $quality = 0;
+                break;
+            default:
+                $out['success'] = false;
+                $out['msg'] = 'Tile ('.$id.') Unrecognized extension: '.$ext;
+                return json_encode($out);                            
+        }
+        
+        if (!$srcImg) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile ('.$id.') could not create image: '.$src;
+            return json_encode($out);                        
+        }
+        
+        // Cleared for launch.
+        $ratio = 1;
+        if ($Tile->get('width') > $this->max_image_width) {
+            $ratio = $Tile->get('width') / $this->max_image_width;
+        }
+        // Remember: order of ops for type-casting. (int) filters ONLY the variable to its right!!
+        $src_x = (int) ($ratio * $this->modx->getOption('x',$args));
+        $src_y = (int) ($ratio * $this->modx->getOption('y',$args));
+        $src_w = (int) ($ratio * $this->modx->getOption('w',$args));
+        $src_h = (int) ($ratio * $this->modx->getOption('h',$args));
+
+        // Remember: at this point, if the user selects the full width of the *displayed*
+        // image, it is not necessarily equal to the dimensions of the original image.
+        $new_w = (int) ($ratio * $this->modx->getOption('w',$args));
+        $new_h = (int) ($ratio * $this->modx->getOption('h',$args));
+        $destImg = imagecreatetruecolor($src_w, $src_h);
+
+        if (!imagecopy($destImg, $srcImg, 0, 0, $src_x, $src_y, $src_w, $src_h)) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile ('.$id.') could not crop image: '.$src;
+            imagedestroy($srcImg);
+            imagedestroy($destImg);
+            return json_encode($out);                                    
+        }
+        
+        if (!$image_func($destImg,MODX_ASSETS_PATH.$Tile->get('image_location'),$quality)) {
+            $out['success'] = false;
+            $out['msg'] = 'Tile ('.$id.') could not save cropped image: '.$src;
+            imagedestroy($srcImg);
+            imagedestroy($destImg);
+            return json_encode($out);                                    
+        }
+        
+        imagedestroy($srcImg);
+        imagedestroy($destImg);
+
+        $Tile->set('height', $new_h);
+        $Tile->set('width', $new_w);
+        $Tile->set('size', filesize(MODX_ASSETS_PATH.$Tile->get('image_location')));
+        if (!$Tile->save()) {
+            $out['success'] = false;
+            $out['msg'] = 'Could not update Tile: '.$id;            
+            return json_encode($out);                                            
+        }
+        $out['msg'] = 'Image cropped successfully.';
+        $out['img'] = $this->get_image_tag(array('id'=>$id));
+
+        return json_encode($out);
     }
     
     /**
@@ -406,6 +518,7 @@ class TilesMgrController{
      *
      */
     public function get_image_tag($args) {
+               
         $id = (int) $this->modx->getOption('id', $args);
         
         $Tile = $this->modx->getObject('Tile',$id);
@@ -415,6 +528,7 @@ class TilesMgrController{
         }
         
         $data = $Tile->toArray();
+         
         $data['mgr_controller_url'] = $this->mgr_controller_url;
         $data['wide_load'] = '';
         $data['visible_height'] = $data['height'];
@@ -422,16 +536,18 @@ class TilesMgrController{
         if ($data['width'] > $this->max_image_width) {
             $data['wide_load'] = 'Warning! This image is larger than it appears.';
             $ratio = $this->max_image_width / $data['width'];
-            $data['visible_height'] = $data['height'] * $ratio;
+            $data['visible_height'] = (int) ($data['height'] * $ratio);
             $data['visible_width'] = $this->max_image_width;
         }
-                
-        return $this->_load_view('image.php',$data);
+
+        $img = $this->_load_view('image.php',$data);
+
+        return $img;
     }
 
     /**
-     * Get a single tile for Ajax update
-     *
+     * Get a single tile for Ajax update (future?)... currently,
+     * this is ref'd internally by other controllers.
      */
     public function get_tile($args) {
         $id = (int) $this->modx->getOption('id', $args);

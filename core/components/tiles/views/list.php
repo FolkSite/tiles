@@ -12,7 +12,7 @@ jQuery(function() {
 	    	if(data.success == true) {
 	    		jQuery('#tiles-result').html('Success');
 	    	} else{
-	    		$('#tiles-result').html('Failed');
+	    		jQuery('#tiles-result').html('Failed');
 	    	}
 	    	jQuery('#tiles-result-msg').html(data.msg);
 	    	jQuery(".tiles-msg").delay(3200).fadeOut(300);
@@ -39,7 +39,7 @@ jQuery(function() {
 			</div>
 			<div class="buttons-wrapper">
 		            <button class="btn" id="tiles_save_order">Save Order</button>
-		            <a class="btn" href="<?php print $data['mgr_controller_url']; ?>create">Create New Tile</a>
+		            <a class="btn" href="<?php print $data['mgr_controller_url']; ?>update">Create New Tile</a>
 		        	<a class="btn" href="#">Close</a>
 			</div>
 		</div>
